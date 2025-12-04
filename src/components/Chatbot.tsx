@@ -13,7 +13,7 @@ interface Message {
 }
 
 export default function Chatbot() {
-    const { userName } = usePortfolio();
+    const { userName, logout } = usePortfolio();
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Manual state management
@@ -162,7 +162,16 @@ export default function Chatbot() {
                     <div className="w-3 h-3 rounded-full bg-accentGreen animate-pulse"></div>
                     <span className="text-xs font-mono text-textSec">AI_Assistant.exe</span>
                 </div>
-                <span className="text-xs font-mono text-textSec">v2.0.0</span>
+                <div className="flex items-center space-x-3">
+                    <button
+                        onClick={logout}
+                        className="text-xs font-mono text-textSec hover:text-red-400 transition-colors"
+                        title="Reset Session"
+                    >
+                        [RESET]
+                    </button>
+                    <span className="text-xs font-mono text-textSec">v2.0.0</span>
+                </div>
             </div>
 
             {/* Messages */}

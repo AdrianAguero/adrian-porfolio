@@ -7,6 +7,7 @@ interface PortfolioState {
     setUserName: (name: string) => void;
     isAuthenticated: boolean;
     login: (name: string) => void;
+    logout: () => void;
 }
 
 const PortfolioContext = createContext<PortfolioState | undefined>(undefined);
@@ -34,8 +35,14 @@ export const PortfolioProvider = ({ children }: { children: ReactNode }) => {
         setIsAuthenticated(true);
     };
 
+    const logout = () => {
+        localStorage.removeItem('session_user');
+        setUserNameState(null);
+        setIsAuthenticated(false);
+    };
+
     return (
-        <PortfolioContext.Provider value={{ userName, setUserName, isAuthenticated, login }}>
+        <PortfolioContext.Provider value={{ userName, setUserName, isAuthenticated, login, logout }}>
             {children}
         </PortfolioContext.Provider>
     );
