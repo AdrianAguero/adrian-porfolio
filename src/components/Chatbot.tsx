@@ -1,22 +1,26 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Send, Terminal, Cpu } from 'lucide-react';
 import { usePortfolio } from '@/lib/store';
 import { motion } from 'framer-motion';
+import { useChat } from '@ai-sdk/react';
 
 interface Message {
     id: string;
-    role: 'user' | 'assistant';
+    role: string;
     content: string;
 }
 
 export default function Chatbot() {
     const { userName } = usePortfolio();
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [input, setInput] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    // Manual state management
+    const [messages, setMessages] = React.useState<Message[]>([]);
+    const [input, setInput] = React.useState('');
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [error, setError] = React.useState<Error | undefined>(undefined);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -24,10 +28,12 @@ export default function Chatbot() {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
+    }, [messages, error]);
 
     // Initial welcome message
     useEffect(() => {
+        // Only set welcome message if messages are empty and we haven't set it yet
+        // We check if the first message is the welcome message to avoid duplicates
         if (messages.length === 0 && userName) {
             setMessages([
                 {
@@ -37,61 +43,112 @@ export default function Chatbot() {
                 }
             ]);
         }
-    }, [userName]);
+    }, [userName]); // Removed messages dependency to avoid infinite loops
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInput(e.target.value);
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!input.trim() || isLoading) return;
 
+        const userMessageContent = input.trim();
+        setInput(''); // Clear input immediately
+        setError(undefined);
+
+        // Add user message
         const userMessage: Message = {
-            id: Date.now().toString(),
+            id: Date.now().toString() + '-user',
             role: 'user',
-            content: input
+            content: userMessageContent
         };
 
         setMessages(prev => [...prev, userMessage]);
-        setInput('');
         setIsLoading(true);
 
         try {
             const response = await fetch('/api/chat', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify({
-                    messages: [...messages, userMessage].map(m => ({ role: m.role, content: m.content }))
-                })
+                    messages: [...messages, userMessage].map(m => ({
+                        role: m.role,
+                        content: m.content
+                    }))
+                }),
             });
 
-            if (!response.ok) throw new Error('Failed to fetch');
+            if (!response.ok) {
+                throw new Error('Failed to send message');
+            }
 
-            const reader = response.body?.getReader();
+            if (!response.body) {
+                throw new Error('No response body');
+            }
+
+            // Create placeholder for assistant message
+            const assistantMessageId = Date.now().toString() + '-assistant';
+            setMessages(prev => [...prev, {
+                id: assistantMessageId,
+                role: 'assistant',
+                content: ''
+            }]);
+
+            const reader = response.body.getReader();
             const decoder = new TextDecoder();
-            let assistantMessage = '';
-            const assistantMessageId = (Date.now() + 1).toString();
+            let assistantContent = '';
 
-            setMessages(prev => [...prev, { id: assistantMessageId, role: 'assistant', content: '' }]);
+            console.log('Stream started');
+
+            let lastUpdateTime = 0;
 
             while (true) {
-                const { done, value } = await reader!.read();
-                if (done) break;
-                const chunk = decoder.decode(value, { stream: true });
-                assistantMessage += chunk;
+                try {
+                    const { done, value } = await reader.read();
+                    if (done) {
+                        console.log('Stream complete. Final content length:', assistantContent.length);
+                        // Final update to ensure everything is rendered
+                        setMessages(prev => {
+                            const newMessages = [...prev];
+                            const messageIndex = newMessages.findIndex(m => m.id === assistantMessageId);
+                            if (messageIndex !== -1) {
+                                newMessages[messageIndex] = {
+                                    ...newMessages[messageIndex],
+                                    content: assistantContent
+                                };
+                            }
+                            return newMessages;
+                        });
+                        break;
+                    }
 
-                setMessages(prev => prev.map(m =>
-                    m.id === assistantMessageId ? { ...m, content: assistantMessage } : m
-                ));
+                    const chunk = decoder.decode(value, { stream: true });
+                    assistantContent += chunk;
+
+                    // Throttle updates to avoid overwhelming React
+                    const now = Date.now();
+                    if (now - lastUpdateTime > 50) {
+                        setMessages(prev => {
+                            const newMessages = [...prev];
+                            const messageIndex = newMessages.findIndex(m => m.id === assistantMessageId);
+                            if (messageIndex !== -1) {
+                                newMessages[messageIndex] = {
+                                    ...newMessages[messageIndex],
+                                    content: assistantContent
+                                };
+                            }
+                            return newMessages;
+                        });
+                        lastUpdateTime = now;
+                    }
+                } catch (readError) {
+                    console.error('Error reading stream:', readError);
+                    break;
+                }
             }
-        } catch (error) {
-            console.error('Chat error:', error);
-            setMessages(prev => [...prev, {
-                id: Date.now().toString(),
-                role: 'assistant',
-                content: 'Lo siento, hubo un error al procesar tu solicitud. Por favor intenta de nuevo.'
-            }]);
+
+        } catch (err) {
+            console.error('Chat error:', err);
+            setError(err instanceof Error ? err : new Error('Unknown error'));
         } finally {
             setIsLoading(false);
         }
@@ -105,7 +162,7 @@ export default function Chatbot() {
                     <div className="w-3 h-3 rounded-full bg-accentGreen animate-pulse"></div>
                     <span className="text-xs font-mono text-textSec">AI_Assistant.exe</span>
                 </div>
-                <span className="text-xs font-mono text-textSec">v1.5.0</span>
+                <span className="text-xs font-mono text-textSec">v2.0.0</span>
             </div>
 
             {/* Messages */}
@@ -126,6 +183,7 @@ export default function Chatbot() {
                             {m.role === 'assistant' && (
                                 <span className="text-accentGreen mr-2">{'>'}</span>
                             )}
+                            {/* Clean up potential protocol artifacts if they appear, though we should fix source */}
                             {m.content}
                         </div>
                     </motion.div>
@@ -136,16 +194,24 @@ export default function Chatbot() {
                         <span>Processing...</span>
                     </div>
                 )}
+                {error && (
+                    <div className="flex justify-start">
+                        <div className="max-w-[85%] p-3 rounded-lg bg-red-500/10 text-red-400 border border-red-500/50">
+                            <span className="text-red-500 mr-2">!</span>
+                            Error: {error.message || 'Something went wrong. Please try again.'}
+                        </div>
+                    </div>
+                )}
                 <div ref={messagesEndRef} />
             </div>
 
             {/* Input */}
-            <form onSubmit={handleSubmit} className="p-3 border-t border-border bg-background/50">
+            <form onSubmit={handleFormSubmit} className="p-3 border-t border-border bg-background/50">
                 <div className="relative flex items-center">
                     <input
                         className="w-full bg-transparent text-textMain font-mono text-sm focus:outline-none placeholder-textSec/50 pr-10"
                         value={input}
-                        onChange={handleInputChange}
+                        onChange={(e) => setInput(e.target.value)}
                         placeholder={`Ask about my projects (e.g. 'Spark', 'Azure')...`}
                     />
                     <button
