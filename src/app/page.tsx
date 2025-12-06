@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { usePortfolio } from '@/lib/store';
-import TheGate from '@/components/TheGate';
+import MatrixGate from '@/components/MatrixGate';
 import Header from '@/components/Header';
 import Chatbot from '@/components/Chatbot';
 import ProjectCard from '@/components/ProjectCard';
@@ -12,14 +12,23 @@ import { motion } from 'framer-motion';
 
 export default function Home() {
   const { isAuthenticated, userName } = usePortfolio();
-  console.log("Home render. isAuthenticated:", isAuthenticated);
+  // If already authenticated (e.g. refresh), start boot immediately.
+  // Otherwise, wait for MatrixGate to signal completion.
+  const [startChatBoot, setStartChatBoot] = React.useState(false);
 
-  if (!isAuthenticated) {
-    return <TheGate />;
-  }
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      setStartChatBoot(true);
+    } else {
+      setStartChatBoot(false);
+    }
+  }, [isAuthenticated]);
+
+  console.log("Home render. isAuthenticated:", isAuthenticated);
 
   return (
     <div className="flex flex-col min-h-screen md:h-screen text-textMain md:overflow-hidden relative" style={{ backgroundColor: '#0E1117' }}>
+      {!isAuthenticated && <MatrixGate onExitComplete={() => setStartChatBoot(true)} />}
       <Header />
 
       <main className="flex-1 flex flex-col md:flex-row md:overflow-hidden">
@@ -40,7 +49,7 @@ export default function Home() {
           </motion.div>
 
           <div className="flex-1 min-h-[400px] flex flex-col">
-            <Chatbot />
+            <Chatbot startBoot={startChatBoot} key={isAuthenticated ? 'auth' : 'guest'} />
           </div>
 
           <div className="mt-8 hidden md:block">

@@ -174,5 +174,18 @@ export const projects: Project[] = [
   }
 ];
 
-export const certifications: Certification[] = []; // Empty as per new knowledge base
+export const certifications: Certification[] = [
+  {
+    name: "Azure Data Engineer Associate (DP-203)",
+    issuer: "Microsoft",
+    date: "En curso",
+    url: ""
+  },
+  {
+    name: "Databricks Certified Associate Developer for Apache Spark",
+    issuer: "Databricks",
+    date: "En curso",
+    url: ""
+  }
+];
 

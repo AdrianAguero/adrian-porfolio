@@ -10,9 +10,9 @@ export default function Header() {
         <header className="sticky top-0 z-40 w-full bg-[#0E1117] border-b border-border h-14 flex items-center justify-between px-4 md:px-6">
             <div className="flex items-center space-x-2 text-sm font-mono">
                 <Terminal className="text-accentGreen w-4 h-4" />
-                <span className="text-textSec">~/adrian_portfolio</span>
+                <span className="text-textSec">~/adrian_portafolio</span>
                 <span className="text-textSec">/</span>
-                <span className="text-textMain font-bold">main</span>
+                <span className="text-textMain font-bold">principal</span>
             </div>
 
             <button
