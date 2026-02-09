@@ -16,7 +16,7 @@ interface ChatMessage {
 
 export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) {
     const { userName, logout } = usePortfolio();
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const chatContainerRef = useRef<HTMLDivElement>(null);
     const streamingRef = useRef<HTMLSpanElement>(null);
     const accumulatedRef = useRef('');
 
@@ -37,6 +37,7 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
 
     // Boot Sequence State — skip boot if returning user with chat history
     const [isBooting, setIsBooting] = useState(!hasSavedMessages);
+    const [bootStarted, setBootStarted] = useState(false);
     const [bootProgress, setBootProgress] = useState(0);
     const [bootLog, setBootLog] = useState("Initializing system...");
     const [showWelcome, setShowWelcome] = useState(hasSavedMessages);
@@ -57,7 +58,10 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
     }, [messages]);
 
     const scrollToBottom = useCallback(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        const container = chatContainerRef.current;
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
     }, []);
 
     useEffect(() => {
@@ -68,6 +72,7 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
     useEffect(() => {
         if (!startBoot || hasSavedMessages) return;
 
+        setBootStarted(true);
         const totalDuration = 5000;
         const intervalTime = 50;
         const steps = totalDuration / intervalTime;
@@ -153,6 +158,9 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
             setIsStreaming(true);
             setIsLoading(false);
 
+            // Wait for React to render the streaming span before reading
+            await new Promise(resolve => requestAnimationFrame(resolve));
+
             const reader = response.body.getReader();
             const decoder = new TextDecoder('utf-8');
 
@@ -166,8 +174,8 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
                 // Write directly to DOM — bypasses React batching entirely
                 if (streamingRef.current) {
                     streamingRef.current.textContent = accumulatedRef.current;
-                    scrollToBottom();
                 }
+                scrollToBottom();
             }
 
             // Flush remaining bytes
@@ -226,9 +234,9 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
             </div>
 
             {/* Content Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 font-mono text-sm custom-scrollbar relative">
+            <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 font-mono text-sm custom-scrollbar relative">
                 <AnimatePresence mode="wait">
-                    {isBooting ? (
+                    {isBooting && bootStarted ? (
                         <motion.div
                             key="booting"
                             initial={{ opacity: 0 }}
@@ -307,7 +315,6 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
                                     </div>
                                 </div>
                             )}
-                            <div ref={messagesEndRef} />
                         </motion.div>
                     )}
                 </AnimatePresence>

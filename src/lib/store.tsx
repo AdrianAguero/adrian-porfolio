@@ -33,6 +33,11 @@ export const PortfolioProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const login = (name: string) => {
+        // Clear chat history if different user logs in
+        const previousUser = localStorage.getItem('session_user');
+        if (previousUser && previousUser !== name) {
+            localStorage.removeItem('chat_messages');
+        }
         localStorage.setItem('session_user', name);
         setUserName(name);
         setIsAuthenticated(true);
