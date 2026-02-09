@@ -24,8 +24,6 @@ export default function Home() {
     }
   }, [isAuthenticated]);
 
-  console.log("Home render. isAuthenticated:", isAuthenticated);
-
   return (
     <div className="flex flex-col min-h-screen md:h-screen text-textMain md:overflow-hidden relative" style={{ backgroundColor: '#0E1117' }}>
       {!isAuthenticated && <MatrixGate onExitComplete={() => setStartChatBoot(true)} />}

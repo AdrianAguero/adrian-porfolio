@@ -1,4 +1,4 @@
-import { google, createGoogleGenerativeAI } from '@ai-sdk/google';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { streamText } from 'ai';
 import { knowledge } from '@/lib/portfolioData';
 import { checkRateLimit } from '@/lib/ratelimit';
@@ -101,9 +101,7 @@ export async function POST(req: Request) {
   `;
 
   try {
-    console.log('Checking API Keys...');
     const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GOOGLE_API_KEY;
-    console.log('Using API Key:', apiKey ? 'Present' : 'Missing');
 
     if (!apiKey) {
       throw new Error('API Key is missing. Please set GOOGLE_GENERATIVE_AI_API_KEY or GOOGLE_API_KEY in .env.local');
@@ -113,21 +111,15 @@ export async function POST(req: Request) {
       apiKey: apiKey
     });
 
-    console.log('Starting streamText generation...');
     const result = streamText({
       model: google('gemini-2.0-flash'),
       system: context,
       messages,
-      onFinish: (event) => {
-        console.log('Stream finished. Usage:', event.usage);
-        console.log('Generated text:', event.text);
-      },
     });
 
-    console.log('StreamText initiated, returning response...');
     return result.toTextStreamResponse();
   } catch (error) {
-    console.error('Error in streamText:', error);
+    console.error('Error in chat API:', error);
     return new Response(JSON.stringify({ error: 'Error generating response' }), { status: 500 });
   }
 }

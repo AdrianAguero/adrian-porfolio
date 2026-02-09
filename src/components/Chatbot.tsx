@@ -1,46 +1,49 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Send, Terminal, Cpu } from 'lucide-react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { Send, Cpu } from 'lucide-react';
 import { usePortfolio } from '@/lib/store';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useChat } from '@ai-sdk/react';
 
-interface Message {
+interface ChatMessage {
     id: string;
-    role: string;
+    role: 'user' | 'assistant';
     content: string;
 }
 
 export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) {
     const { userName, logout } = usePortfolio();
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const streamingRef = useRef<HTMLSpanElement>(null);
+    const accumulatedRef = useRef('');
 
     // Boot Sequence State
     const [isBooting, setIsBooting] = useState(true);
     const [bootProgress, setBootProgress] = useState(0);
     const [bootLog, setBootLog] = useState("Initializing system...");
+    const [showWelcome, setShowWelcome] = useState(false);
 
-    // Manual state management
-    const [messages, setMessages] = React.useState<Message[]>([]);
-    const [input, setInput] = React.useState('');
-    const [isLoading, setIsLoading] = React.useState(false);
-    const [error, setError] = React.useState<Error | undefined>(undefined);
+    // Chat state
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [input, setInput] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [isStreaming, setIsStreaming] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const scrollToBottom = () => {
+    const scrollToBottom = useCallback(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
+    }, []);
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages, error]);
+    }, [messages, error, showWelcome, isStreaming, scrollToBottom]);
 
     // Boot Sequence Logic
     useEffect(() => {
         if (!startBoot) return;
 
-        const totalDuration = 5000; // 5 seconds
-        const intervalTime = 50; // Update every 50ms
+        const totalDuration = 5000;
+        const intervalTime = 50;
         const steps = totalDuration / intervalTime;
         let currentStep = 0;
 
@@ -60,7 +63,6 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
             const progress = Math.min((currentStep / steps) * 100, 100);
             setBootProgress(progress);
 
-            // Update logs randomly
             if (Math.random() > 0.7) {
                 setBootLog(logs[Math.floor(Math.random() * logs.length)]);
             }
@@ -68,133 +70,99 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
             if (currentStep >= steps) {
                 clearInterval(interval);
                 setIsBooting(false);
+                setShowWelcome(true);
             }
         }, intervalTime);
 
         return () => clearInterval(interval);
     }, [startBoot]);
 
-    // Initial welcome message (Triggered after boot)
-    useEffect(() => {
-        if (!isBooting && messages.length === 0 && userName) {
-            setMessages([
-                {
-                    id: 'welcome',
-                    role: 'assistant',
-                    content: `Sistema cargado correctamente. Hola ${userName}, soy la IA de Adrián. He analizado sus proyectos y skills. ¿Qué te gustaría saber?`
-                }
-            ]);
-        }
-    }, [isBooting, userName]);
-
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!input.trim() || isLoading) return;
 
-        const userMessageContent = input.trim();
-        setInput(''); // Clear input immediately
-        setError(undefined);
+        const userText = input.trim();
+        setInput('');
+        setError(null);
 
-        // Add user message
-        const userMessage: Message = {
+        const userMessage: ChatMessage = {
             id: Date.now().toString() + '-user',
             role: 'user',
-            content: userMessageContent
+            content: userText,
         };
 
-        setMessages(prev => [...prev, userMessage]);
+        const updatedMessages = [...messages, userMessage];
+        setMessages(updatedMessages);
         setIsLoading(true);
+        setIsStreaming(false);
 
         try {
             const response = await fetch('/api/chat', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    messages: [...messages, userMessage].map(m => ({
+                    messages: updatedMessages.map(m => ({
                         role: m.role,
-                        content: m.content
-                    }))
+                        content: m.content,
+                    })),
                 }),
             });
 
             if (!response.ok) {
-                throw new Error('Failed to send message');
+                const errorText = await response.text();
+                throw new Error(response.status === 429 ? 'Demasiadas solicitudes, esperá un momento.' : errorText || 'Error del servidor');
             }
 
             if (!response.body) {
-                throw new Error('No response body');
+                throw new Error('Sin respuesta del servidor');
             }
 
-            // Create placeholder for assistant message
-            const assistantMessageId = Date.now().toString() + '-assistant';
-            setMessages(prev => [...prev, {
-                id: assistantMessageId,
-                role: 'assistant',
-                content: ''
-            }]);
+            // Start streaming mode — render via DOM ref, not React state
+            accumulatedRef.current = '';
+            setIsStreaming(true);
+            setIsLoading(false);
 
             const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let assistantContent = '';
-
-            console.log('Stream started');
-
-            let lastUpdateTime = 0;
+            const decoder = new TextDecoder('utf-8');
 
             while (true) {
-                try {
-                    const { done, value } = await reader.read();
-                    if (done) {
-                        console.log('Stream complete. Final content length:', assistantContent.length);
-                        // Final update to ensure everything is rendered
-                        setMessages(prev => {
-                            const newMessages = [...prev];
-                            const messageIndex = newMessages.findIndex(m => m.id === assistantMessageId);
-                            if (messageIndex !== -1) {
-                                newMessages[messageIndex] = {
-                                    ...newMessages[messageIndex],
-                                    content: assistantContent
-                                };
-                            }
-                            return newMessages;
-                        });
-                        break;
-                    }
+                const { done, value } = await reader.read();
+                if (done) break;
 
-                    const chunk = decoder.decode(value, { stream: true });
-                    assistantContent += chunk;
+                const chunk = decoder.decode(value, { stream: true });
+                accumulatedRef.current += chunk;
 
-                    // Throttle updates to avoid overwhelming React
-                    const now = Date.now();
-                    if (now - lastUpdateTime > 50) {
-                        setMessages(prev => {
-                            const newMessages = [...prev];
-                            const messageIndex = newMessages.findIndex(m => m.id === assistantMessageId);
-                            if (messageIndex !== -1) {
-                                newMessages[messageIndex] = {
-                                    ...newMessages[messageIndex],
-                                    content: assistantContent
-                                };
-                            }
-                            return newMessages;
-                        });
-                        lastUpdateTime = now;
-                    }
-                } catch (readError) {
-                    console.error('Error reading stream:', readError);
-                    break;
+                // Write directly to DOM — bypasses React batching entirely
+                if (streamingRef.current) {
+                    streamingRef.current.textContent = accumulatedRef.current;
+                    scrollToBottom();
                 }
             }
 
+            // Flush remaining bytes
+            const remaining = decoder.decode();
+            if (remaining) {
+                accumulatedRef.current += remaining;
+            }
+
+            // Stream done — commit final text to React state
+            const finalText = accumulatedRef.current;
+            const assistantId = Date.now().toString() + '-assistant';
+            setIsStreaming(false);
+            setMessages(prev => [...prev, { id: assistantId, role: 'assistant', content: finalText }]);
+
         } catch (err) {
-            console.error('Chat error:', err);
-            setError(err instanceof Error ? err : new Error('Unknown error'));
+            const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
+            setError(errorMessage);
+            setIsStreaming(false);
         } finally {
             setIsLoading(false);
         }
     };
+
+    const welcomeMessage = showWelcome && messages.length === 0
+        ? `Sistema cargado correctamente. Hola ${userName}, soy la IA de Adrián. He analizado sus proyectos y skills. ¿Qué te gustaría saber?`
+        : null;
 
     return (
         <div className="flex flex-col h-[500px] w-full border border-[#00D084] rounded-lg bg-card overflow-hidden shadow-[0_0_20px_rgba(0,208,132,0.2)]">
@@ -250,15 +218,21 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
                             animate={{ opacity: 1 }}
                             className="space-y-4"
                         >
+                            {welcomeMessage && (
+                                <div className="flex justify-start">
+                                    <div className="max-w-[85%] p-3 rounded-lg whitespace-pre-wrap break-words bg-transparent text-textMain">
+                                        <span className="text-accentGreen mr-2">{'>'}</span>
+                                        {welcomeMessage}
+                                    </div>
+                                </div>
+                            )}
                             {messages.map((m) => (
-                                <motion.div
+                                <div
                                     key={m.id}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
                                     className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
                                     <div
-                                        className={`max-w-[85%] p-3 rounded-lg ${m.role === 'user'
+                                        className={`max-w-[85%] p-3 rounded-lg whitespace-pre-wrap break-words ${m.role === 'user'
                                             ? 'bg-[#1F6FEB] text-white'
                                             : 'bg-transparent text-textMain'
                                             }`}
@@ -268,8 +242,16 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
                                         )}
                                         {m.content}
                                     </div>
-                                </motion.div>
+                                </div>
                             ))}
+                            {isStreaming && (
+                                <div className="flex justify-start">
+                                    <div className="max-w-[85%] p-3 rounded-lg whitespace-pre-wrap break-words bg-transparent text-textMain">
+                                        <span className="text-accentGreen mr-2">{'>'}</span>
+                                        <span ref={streamingRef}></span>
+                                    </div>
+                                </div>
+                            )}
                             {isLoading && (
                                 <div className="flex items-center space-x-2 text-textSec text-xs ml-2">
                                     <Cpu className="w-3 h-3 animate-spin" />
@@ -280,7 +262,7 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
                                 <div className="flex justify-start">
                                     <div className="max-w-[85%] p-3 rounded-lg bg-red-500/10 text-red-400 border border-red-500/50">
                                         <span className="text-red-500 mr-2">!</span>
-                                        Error: {error.message || 'Something went wrong. Please try again.'}
+                                        Error: {error}
                                     </div>
                                 </div>
                             )}
