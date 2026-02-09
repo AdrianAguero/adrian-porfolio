@@ -1,9 +1,12 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Send, Cpu } from 'lucide-react';
+import { Send, Cpu, Trash2 } from 'lucide-react';
 import { usePortfolio } from '@/lib/store';
 import { motion, AnimatePresence } from 'framer-motion';
+
+const CHAT_STORAGE_KEY = 'chat_messages';
+const MAX_STORED_MESSAGES = 50;
 
 interface ChatMessage {
     id: string;
@@ -17,18 +20,41 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
     const streamingRef = useRef<HTMLSpanElement>(null);
     const accumulatedRef = useRef('');
 
-    // Boot Sequence State
-    const [isBooting, setIsBooting] = useState(true);
+    // Load saved messages from localStorage
+    const savedMessages = useRef<ChatMessage[]>([]);
+    const initDone = useRef(false);
+    if (!initDone.current) {
+        try {
+            const stored = typeof window !== 'undefined' ? localStorage.getItem(CHAT_STORAGE_KEY) : null;
+            if (stored) {
+                savedMessages.current = JSON.parse(stored);
+            }
+        } catch { /* ignore parse errors */ }
+        initDone.current = true;
+    }
+
+    const hasSavedMessages = savedMessages.current.length > 0;
+
+    // Boot Sequence State — skip boot if returning user with chat history
+    const [isBooting, setIsBooting] = useState(!hasSavedMessages);
     const [bootProgress, setBootProgress] = useState(0);
     const [bootLog, setBootLog] = useState("Initializing system...");
-    const [showWelcome, setShowWelcome] = useState(false);
+    const [showWelcome, setShowWelcome] = useState(hasSavedMessages);
 
     // Chat state
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [messages, setMessages] = useState<ChatMessage[]>(savedMessages.current);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isStreaming, setIsStreaming] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // Persist messages to localStorage whenever they change
+    useEffect(() => {
+        if (messages.length > 0) {
+            const toStore = messages.slice(-MAX_STORED_MESSAGES);
+            localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(toStore));
+        }
+    }, [messages]);
 
     const scrollToBottom = useCallback(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -38,9 +64,9 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
         scrollToBottom();
     }, [messages, error, showWelcome, isStreaming, scrollToBottom]);
 
-    // Boot Sequence Logic
+    // Boot Sequence Logic — only runs if no saved messages
     useEffect(() => {
-        if (!startBoot) return;
+        if (!startBoot || hasSavedMessages) return;
 
         const totalDuration = 5000;
         const intervalTime = 50;
@@ -75,7 +101,12 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
         }, intervalTime);
 
         return () => clearInterval(interval);
-    }, [startBoot]);
+    }, [startBoot, hasSavedMessages]);
+
+    const clearChat = useCallback(() => {
+        setMessages([]);
+        localStorage.removeItem(CHAT_STORAGE_KEY);
+    }, []);
 
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -173,6 +204,16 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
                     <span className="text-xs font-mono text-textSec">AI_Assistant.exe</span>
                 </div>
                 <div className="flex items-center space-x-3">
+                    {messages.length > 0 && (
+                        <button
+                            onClick={clearChat}
+                            className="text-xs font-mono text-textSec hover:text-yellow-400 transition-colors flex items-center gap-1"
+                            title="Clear Chat History"
+                        >
+                            <Trash2 size={10} />
+                            [CLEAR]
+                        </button>
+                    )}
                     <button
                         onClick={logout}
                         className="text-xs font-mono text-textSec hover:text-red-400 transition-colors"

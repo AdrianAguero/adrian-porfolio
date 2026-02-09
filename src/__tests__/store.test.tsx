@@ -55,6 +55,25 @@ describe('PortfolioProvider / usePortfolio', () => {
     expect(result.current.isAuthenticated).toBe(true);
   });
 
+  it('isHydrated becomes true after mount', () => {
+    const { result } = renderHook(() => usePortfolio(), { wrapper });
+    expect(result.current.isHydrated).toBe(true);
+  });
+
+  it('logout also clears chat_messages from localStorage', () => {
+    localStorage.setItem('chat_messages', JSON.stringify([{ id: '1', role: 'user', content: 'test' }]));
+    const { result } = renderHook(() => usePortfolio(), { wrapper });
+
+    act(() => {
+      result.current.login('Adrian');
+    });
+    act(() => {
+      result.current.logout();
+    });
+
+    expect(localStorage.getItem('chat_messages')).toBeNull();
+  });
+
   it('throws error when used outside PortfolioProvider', () => {
     expect(() => {
       renderHook(() => usePortfolio());

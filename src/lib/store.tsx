@@ -6,6 +6,7 @@ interface PortfolioState {
     userName: string | null;
     setUserName: (name: string) => void;
     isAuthenticated: boolean;
+    isHydrated: boolean;
     login: (name: string) => void;
     logout: () => void;
 }
@@ -15,6 +16,7 @@ const PortfolioContext = createContext<PortfolioState | undefined>(undefined);
 export const PortfolioProvider = ({ children }: { children: ReactNode }) => {
     const [userName, setUserNameState] = useState<string | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isHydrated, setIsHydrated] = useState(false);
 
     useEffect(() => {
         // Check localStorage on mount
@@ -23,6 +25,7 @@ export const PortfolioProvider = ({ children }: { children: ReactNode }) => {
             setUserNameState(storedName);
             setIsAuthenticated(true);
         }
+        setIsHydrated(true);
     }, []);
 
     const setUserName = (name: string) => {
@@ -37,12 +40,13 @@ export const PortfolioProvider = ({ children }: { children: ReactNode }) => {
 
     const logout = () => {
         localStorage.removeItem('session_user');
+        localStorage.removeItem('chat_messages');
         setUserNameState(null);
         setIsAuthenticated(false);
     };
 
     return (
-        <PortfolioContext.Provider value={{ userName, setUserName, isAuthenticated, login, logout }}>
+        <PortfolioContext.Provider value={{ userName, setUserName, isAuthenticated, isHydrated, login, logout }}>
             {children}
         </PortfolioContext.Provider>
     );

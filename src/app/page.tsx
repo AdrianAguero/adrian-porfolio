@@ -11,18 +11,23 @@ import { profile, projects, skills, certifications } from '@/lib/portfolioData';
 import { motion } from 'framer-motion';
 
 export default function Home() {
-  const { isAuthenticated, userName } = usePortfolio();
-  // If already authenticated (e.g. refresh), start boot immediately.
-  // Otherwise, wait for MatrixGate to signal completion.
+  const { isAuthenticated, isHydrated, userName } = usePortfolio();
   const [startChatBoot, setStartChatBoot] = React.useState(false);
 
   React.useEffect(() => {
-    if (isAuthenticated) {
+    if (isHydrated && isAuthenticated) {
       setStartChatBoot(true);
     } else {
       setStartChatBoot(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isHydrated]);
+
+  // Wait for hydration before rendering anything — prevents MatrixGate flash & "USER" text
+  if (!isHydrated) {
+    return (
+      <div className="flex flex-col min-h-screen md:h-screen md:overflow-hidden" style={{ backgroundColor: '#0E1117' }} />
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen md:h-screen text-textMain md:overflow-hidden relative" style={{ backgroundColor: '#0E1117' }}>
