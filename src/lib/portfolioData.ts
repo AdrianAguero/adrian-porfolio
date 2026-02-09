@@ -37,6 +37,10 @@ export interface Project {
   demoUrl?: string;
   caseStudyUrl?: string;
   diagramType: 'ETL' | 'STREAMING' | 'WAREHOUSE' | 'MLOPS';
+  highlights?: string[];
+  period?: string;
+  role?: string;
+  architectureFlow?: { name: string; icon: string }[];
 }
 
 export interface Certification {
@@ -157,20 +161,45 @@ export const projects: Project[] = [
   {
     id: "exp_helios",
     title: "Helios System (Banca)",
-    description: "Desarrollo de pipelines ETL sobre Hadoop, integración multi-banco (ATM, Contabilidad) y automatización con NiFi. Optimización de SQL en tablas de alto volumen.",
+    description: "Pipelines ETL batch sobre Hadoop para procesamiento de datos financieros críticos. Integración y unificación de datos de 4 bancos (BER, BSJ, BSC, BSF) con información de ATM, Contabilidad y Homebanking.",
     techStack: knowledge.workExperience.helios.tech,
-    status: "IN_PROGRESS", // "Actualidad"
+    status: "IN_PROGRESS",
     diagramType: "ETL",
-    repoUrl: "#"
+    period: "2024 - Actualidad",
+    role: "Data Engineer",
+    highlights: [
+      "Unificación de modelos de datos de 4 entidades bancarias",
+      "Optimización de queries SQL en tablas con millones de registros",
+      "Automatización de pipelines reduciendo tareas manuales con NiFi",
+      "Procesamiento de transacciones ATM, reversas y saldos contables"
+    ],
+    architectureFlow: [
+      { name: "Sources", icon: "database" },
+      { name: "NiFi", icon: "workflow" },
+      { name: "HDFS", icon: "hard-drive" },
+      { name: "Spark", icon: "cpu" },
+      { name: "Kudu/Hive", icon: "database" }
+    ]
   },
   {
     id: "exp_neoris",
     title: "Neoris (Backend)",
-    description: "Desarrollo backend con .NET/C#, mantenimiento de APIs REST y optimización de consultas SQL Server.",
+    description: "Soporte en desarrollo backend con .NET/C#, mantenimiento de APIs REST y optimización de consultas sobre SQL Server. Primera experiencia profesional en desarrollo de software.",
     techStack: knowledge.workExperience.neoris.tech,
     status: "COMPLETED",
     diagramType: "WAREHOUSE",
-    repoUrl: "#"
+    period: "2023",
+    role: "Trainee .NET Developer",
+    highlights: [
+      "Mantenimiento y mejora de APIs REST existentes",
+      "Optimización de consultas SQL Server",
+      "Resolución de bugs y tareas operativas del día a día"
+    ],
+    architectureFlow: [
+      { name: "API", icon: "globe" },
+      { name: ".NET", icon: "code" },
+      { name: "SQL Server", icon: "database" }
+    ]
   }
 ];
 

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /debug/
+
+Sitemap: https://adrianaguero.dev/sitemap.xml

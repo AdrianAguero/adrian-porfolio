@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Github, ExternalLink, FileText } from 'lucide-react';
+import { Github, FileText, Calendar, Briefcase, ChevronRight } from 'lucide-react';
 import { Project } from '@/lib/portfolioData';
 import ArchitectureDiagram from './ArchitectureDiagram';
 
@@ -24,7 +24,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                     <h3 className="text-xl font-bold text-textMain group-hover:text-accentGreen transition-colors">
                         {project.title}
                     </h3>
-                    <div className="flex items-center space-x-2 mt-2">
+                    <div className="flex items-center space-x-3 mt-2 flex-wrap gap-y-1">
                         {project.status === 'IN_PROGRESS' && (
                             <span className="text-xs font-mono bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded border border-yellow-500/20">
                                 WIP
@@ -35,19 +35,28 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                                 v1.0
                             </span>
                         )}
+                        {project.role && (
+                            <span className="text-xs text-textSec flex items-center gap-1">
+                                <Briefcase size={12} />
+                                {project.role}
+                            </span>
+                        )}
+                        {project.period && (
+                            <span className="text-xs text-textSec flex items-center gap-1">
+                                <Calendar size={12} />
+                                {project.period}
+                            </span>
+                        )}
                     </div>
                 </div>
                 <div className="flex space-x-2">
-                    {project.repoUrl && (
+                    {project.repoUrl && project.repoUrl !== '#' && (
                         <a
-                            href={project.status === 'IN_PROGRESS' ? '#' : project.repoUrl}
+                            href={project.repoUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`p-2 rounded-md border border-border transition-colors ${project.status === 'IN_PROGRESS'
-                                    ? 'text-textSec cursor-not-allowed opacity-50'
-                                    : 'text-textSec hover:text-white hover:border-accentGreen hover:bg-accentGreen/10'
-                                }`}
-                            title={project.status === 'IN_PROGRESS' ? 'Private Repo (WIP)' : 'View Code'}
+                            className="p-2 rounded-md border border-border text-textSec hover:text-white hover:border-accentGreen hover:bg-accentGreen/10 transition-colors"
+                            title="View Code"
                         >
                             <Github size={18} />
                         </a>
@@ -64,12 +73,24 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 </div>
             </div>
 
-            <p className="text-textSec mb-6 text-sm leading-relaxed">
+            <p className="text-textSec mb-4 text-sm leading-relaxed">
                 {project.description}
             </p>
 
+            {/* Highlights / Key Achievements */}
+            {project.highlights && project.highlights.length > 0 && (
+                <ul className="mb-5 space-y-1.5">
+                    {project.highlights.map((highlight, i) => (
+                        <li key={i} className="flex items-start gap-2 text-xs text-textSec">
+                            <ChevronRight size={12} className="text-accentGreen mt-0.5 shrink-0" />
+                            <span>{highlight}</span>
+                        </li>
+                    ))}
+                </ul>
+            )}
+
             <div className="mb-6">
-                <ArchitectureDiagram type={project.diagramType} />
+                <ArchitectureDiagram type={project.diagramType} flow={project.architectureFlow} />
             </div>
 
             <div className="flex flex-wrap gap-2">
