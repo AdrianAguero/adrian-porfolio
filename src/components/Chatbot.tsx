@@ -328,11 +328,11 @@ export default function Chatbot({ startBoot = false }: { startBoot?: boolean }) 
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder={isBooting ? "INITIALIZING..." : `Ask about my projects (e.g. 'Spark', 'Azure')...`}
-                        disabled={isBooting || isLoading}
+                        disabled={isBooting || isLoading || isStreaming}
                     />
                     <button
                         type="submit"
-                        disabled={isBooting || isLoading || !input.trim()}
+                        disabled={isBooting || isLoading || isStreaming || !input.trim()}
                         className="absolute right-0 text-accentGreen hover:text-white transition-colors disabled:opacity-50"
                     >
                         <Send size={16} />

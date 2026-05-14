@@ -112,9 +112,13 @@ export async function POST(req: Request) {
     });
 
     const result = streamText({
-      model: google('gemini-2.0-flash'),
+      model: google('gemini-2.5-flash'),
       system: context,
       messages,
+      onError: ({ error }) => {
+        console.error('Gemini stream error:', error);
+        throw error;
+      },
     });
 
     return result.toTextStreamResponse();
