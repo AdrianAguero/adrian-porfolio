@@ -44,7 +44,7 @@ export default function Home() {
             className="mb-8"
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight leading-normal pt-2">
-              Hola, <span className="text-accentGreen">{userName?.toUpperCase() || ‘USER’}.</span>
+              Hola, <span className="text-accentGreen">{userName?.toUpperCase() || 'USER'}.</span>
             </h1>
             <p className="text-xl text-textSec font-light">
               Bienvenido a mi espacio de datos. Soy <span className="text-textMain font-medium">Data Engineer</span> especializado en construir pipelines confiables.
