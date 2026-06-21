@@ -80,7 +80,7 @@ export async function POST(req: Request) {
       <skills>
         Primary: ${knowledge.skills.primary.join(', ')}
         Secondary: ${knowledge.skills.secondary.join(', ')}
-        Cloud (Goal): ${knowledge.skills.cloud.join(', ')}
+        En Formación: ${knowledge.skills.inProgress.join(', ')}
         Soft: ${knowledge.skills.soft.join(', ')}
       </skills>
 

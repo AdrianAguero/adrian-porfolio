@@ -20,7 +20,7 @@ export default function Header() {
                 onClick={() => window.open(profile.links.cv || '#', '_blank')}
             >
                 <Download className="w-3 h-3" />
-                <span>Download CV</span>
+                <span>Descargar CV</span>
             </button>
         </header>
     );

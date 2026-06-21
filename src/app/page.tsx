@@ -44,10 +44,10 @@ export default function Home() {
             className="mb-8"
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight leading-normal pt-2">
-              Hello, <span className="text-accentGreen">{userName?.toUpperCase() || 'USER'}.</span>
+              Hola, <span className="text-accentGreen">{userName?.toUpperCase() || ‘USER’}.</span>
             </h1>
             <p className="text-xl text-textSec font-light">
-              Welcome to my data workspace. I’m a <span className="text-textMain font-medium">Data Engineer</span> specialized in building reliable data pipelines.
+              Bienvenido a mi espacio de datos. Soy <span className="text-textMain font-medium">Data Engineer</span> especializado en construir pipelines confiables.
             </p>
           </motion.div>
 
@@ -56,7 +56,7 @@ export default function Home() {
           </div>
 
           <div className="mt-8 hidden md:block">
-            <h3 className="text-sm font-mono text-textSec mb-3">## TECH_STACK</h3>
+            <h3 className="text-sm font-mono text-textSec mb-3">## TECNOLOGÍAS</h3>
             <div className="flex flex-wrap gap-2">
               {skills.flatMap(s => s.skills).slice(0, 12).map(skill => (
                 <span key={skill} className="px-2 py-1 text-xs font-mono border border-border rounded text-textSec hover:border-accentCyan hover:text-accentCyan transition-colors cursor-default">
@@ -74,7 +74,7 @@ export default function Home() {
             <section>
               <h2 className="text-sm font-mono text-textSec mb-6 flex items-center">
                 <span className="text-accentGreen mr-2">./</span>
-                projects
+                experiencia_laboral
               </h2>
               <div className="grid gap-6">
                 {projects.filter(p => p.status !== 'HIDDEN').map(project => (
@@ -87,7 +87,7 @@ export default function Home() {
               <section>
                 <h2 className="text-sm font-mono text-textSec mb-6 flex items-center">
                   <span className="text-accentGreen mr-2">./</span>
-                  certifications
+                  certificaciones
                 </h2>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {certifications.map((cert, idx) => (
@@ -101,9 +101,9 @@ export default function Home() {
             )}
 
             <footer className="pt-12 pb-6 text-center text-xs text-textSec font-mono border-t border-border mt-12 flex flex-col items-center space-y-2">
-              <p>Built with Next.js 14 + Tailwind + Gemini AI</p>
+              <p>Construido con Next.js + Tailwind + Gemini AI</p>
               <div className="flex items-center space-x-4">
-                <p className="opacity-50">© {new Date().getFullYear()} Adrian Agüero. All systems normal.</p>
+                <p className="opacity-50">© {new Date().getFullYear()} Adrián Agüero. Todos los sistemas operativos.</p>
                 <VisitCounter />
               </div>
             </footer>

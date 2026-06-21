@@ -30,9 +30,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                                 WIP
                             </span>
                         )}
-                        {project.status === 'COMPLETED' && (
+                        {project.status === 'COMPLETED' && project.badge && (
                             <span className="text-xs font-mono bg-accentGreen/10 text-accentGreen px-2 py-1 rounded border border-accentGreen/20">
-                                v1.0
+                                {project.badge}
                             </span>
                         )}
                         {project.role && (
@@ -89,9 +89,11 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 </ul>
             )}
 
-            <div className="mb-6">
-                <ArchitectureDiagram type={project.diagramType} flow={project.architectureFlow} />
-            </div>
+            {project.architectureFlow && project.architectureFlow.length > 0 && (
+                <div className="mb-6">
+                    <ArchitectureDiagram type={project.diagramType} flow={project.architectureFlow} />
+                </div>
+            )}
 
             <div className="flex flex-wrap gap-2">
                 {project.techStack.map((tech) => (
