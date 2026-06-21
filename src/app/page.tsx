@@ -6,7 +6,6 @@ import MatrixGate from '@/components/MatrixGate';
 import Header from '@/components/Header';
 import Chatbot from '@/components/Chatbot';
 import ProjectCard from '@/components/ProjectCard';
-import VisitCounter from '@/components/VisitCounter';
 import { profile, projects, skills, certifications } from '@/lib/portfolioData';
 import { motion } from 'framer-motion';
 
@@ -102,10 +101,7 @@ export default function Home() {
 
             <footer className="pt-12 pb-6 text-center text-xs text-textSec font-mono border-t border-border mt-12 flex flex-col items-center space-y-2">
               <p>Construido con Next.js + Tailwind + Gemini AI</p>
-              <div className="flex items-center space-x-4">
-                <p className="opacity-50">© {new Date().getFullYear()} Adrián Agüero. Todos los sistemas operativos.</p>
-                <VisitCounter />
-              </div>
+              <p className="opacity-50">© {new Date().getFullYear()} Adrián Agüero. Todos los sistemas operativos.</p>
             </footer>
           </div>
         </div>
