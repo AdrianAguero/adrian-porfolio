@@ -1,12 +1,14 @@
 import { Redis } from '@upstash/redis';
 import { NextResponse } from 'next/server';
-import { headers } from 'next/headers';
 
 export const runtime = 'edge';
 
 async function notifyDiscord(visits: number, country: string) {
     const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-    if (!webhookUrl) return;
+    if (!webhookUrl) {
+        console.warn('DISCORD_WEBHOOK_URL not set');
+        return;
+    }
 
     const now = new Date().toLocaleString('es-AR', {
         timeZone: 'America/Argentina/Buenos_Aires',
@@ -29,14 +31,14 @@ async function notifyDiscord(visits: number, country: string) {
         ],
     };
 
-    try {
-        await fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
-        });
-    } catch (err) {
-        console.error('Discord notify error:', err);
+    const res = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+        console.error('Discord webhook failed:', res.status, await res.text());
     }
 }
 
@@ -50,12 +52,11 @@ export async function POST(req: Request) {
         const redis = Redis.fromEnv();
         const visits = await redis.incr('portfolio_visits');
 
-        // Obtener país desde header de Vercel (disponible en Edge runtime)
-        const headersList = await headers();
-        const country = headersList.get('x-vercel-ip-country') || '';
+        // Obtener país desde header de Vercel
+        const country = req.headers.get('x-vercel-ip-country') || '';
 
-        // Notificar a Discord sin bloquear la respuesta
-        notifyDiscord(visits, country);
+        // Esperar a que Discord reciba la notificación antes de responder
+        await notifyDiscord(visits, country);
 
         return NextResponse.json({ visits });
     } catch (error) {
