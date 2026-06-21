@@ -6,6 +6,7 @@ import MatrixGate from '@/components/MatrixGate';
 import Header from '@/components/Header';
 import Chatbot from '@/components/Chatbot';
 import ProjectCard from '@/components/ProjectCard';
+import VisitCounter from '@/components/VisitCounter';
 import { profile, projects, skills, certifications } from '@/lib/portfolioData';
 import { motion } from 'framer-motion';
 
@@ -31,6 +32,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen md:h-screen text-textMain md:overflow-hidden relative" style={{ backgroundColor: '#0E1117' }}>
       {!isAuthenticated && <MatrixGate onExitComplete={() => setStartChatBoot(true)} />}
+      <VisitCounter />
       <Header />
 
       <main className="flex-1 flex flex-col md:flex-row md:overflow-hidden">
