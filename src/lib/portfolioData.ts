@@ -1,258 +1,185 @@
-import { LucideIcon, Database, Server, Cloud, Code, Terminal, Cpu, Layers, GitBranch } from 'lucide-react';
-
-export type ProjectStatus = 'COMPLETED' | 'IN_PROGRESS' | 'HIDDEN';
-
-export interface Link {
-  url: string;
-  label: string;
-}
-
-export interface Profile {
-  name: string;
-  role: string;
-  bio: string;
-  yearsExperience: string;
-  location: string;
-  email: string;
-  links: {
-    github: string;
-    linkedin: string;
-    email: string;
-    cv?: string;
-  };
-}
-
-export interface SkillCategory {
-  name: string;
-  skills: string[];
-}
-
-export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  techStack: string[];
-  status: ProjectStatus;
-  repoUrl?: string;
-  demoUrl?: string;
-  caseStudyUrl?: string;
-  diagramType: 'ETL' | 'STREAMING' | 'WAREHOUSE' | 'MLOPS';
-  highlights?: string[];
-  period?: string;
-  role?: string;
-  badge?: string;
-  architectureFlow?: { name: string; icon: string }[];
-}
-
-export interface Certification {
-  name: string;
-  issuer: string;
-  date: string;
-  url?: string;
-}
-
-// --- KNOWLEDGE BASE ---
-export const knowledge = {
-  profile: {
-    name: "Adrián Agüero",
-    age: 29,
-    location: "Buenos Aires (AMBA)",
-    englishLevel: "A2 (en formación)",
-    workMode: "Remoto o Híbrido",
-    relocation: "No",
-    role: "Semi Senior Data Engineer",
-    experience: "+2 años en banca",
-    cv: "https://drive.google.com/file/d/1QViXff7nz_KPYf1wg45tnNiktXzLytGG/view?usp=sharing",
-    summary:
-      "Semi Senior Data Engineer con más de 2 años de experiencia construyendo y manteniendo pipelines ETL end-to-end en ecosistemas Hadoop/Cloudera para el sector bancario. Especializado en Apache NiFi, Hive, Impala, SQL avanzado y gobierno de datos con Apache Atlas, trabajando sobre arquitecturas Data Lake tipo Medallion de 5 capas. Experiencia comprobada resolviendo incidencias críticas en pipelines productivos para 4 bancos del Grupo Petersen, con foco en calidad de datos, trazabilidad y eficiencia operativa. En formación activa en Python, PySpark y Azure Data Engineering."
-  },
-
-  workExperience: {
-    helios: {
-      role: "Semi Senior Data Engineer",
-      period: "Febrero 2024 - Mayo 2026",
-      responsibilities: [
-        "Desarrollo y mantenimiento de pipelines ETL end-to-end sobre arquitectura Data Lake Medallion de 5 capas en Cloudera.",
-        "Ingesta y transformación de datos con Apache NiFi: flujos dinámicos configurados vía Atlas Terms en params_ingestas.",
-        "Transformaciones SQL complejas (CTEs, window functions) en Hive e Impala sobre grandes volúmenes de datos.",
-        "Gobierno y trazabilidad de datos con Apache Atlas: metadata, linaje y configuración centralizada de ingestas.",
-        "Resolución de incidencias críticas de calidad de datos en producción: análisis de causa raíz y reprocesamientos end-to-end.",
-        "Diseño e implementación de tablas y métricas nuevas según Diseño Técnico con manejo de late-arriving data.",
-        "Orquestación event-driven entre capas usando Kafka como mecanismo de señalización.",
-        "Relevamiento funcional con stakeholders bancarios y validación de resultados pre-producción.",
-        "Monitoreo de pipelines productivos con Elastic Stack (Kibana).",
-        "Coordinación de pases a producción y soporte post-implantación."
-      ],
-      tech: [
-        "Apache NiFi", "Apache Hive", "Apache Impala",
-        "Apache Atlas", "Apache Kudu", "HDFS",
-        "HiveQL", "SQL avanzado", "Kafka",
-        "Cloudera", "Elastic Stack", "WinSCP / PuTTY"
-      ],
-      achievements: [
-        "Resolución de bug crítico en pipeline de pagos digitales MODO: recuperación de datos históricos perdidos en los 4 bancos mediante CTE deduplicado con ROW_NUMBER() OVER (PARTITION BY payment_id).",
-        "Diseño e implementación de tabla de métricas mensuales HBI con manejo de late-arriving data y ventana de lookback de 2 meses.",
-        "Coordinación de reprocesamiento contable end-to-end multicapa para cierre de saldos bancarios sin impacto en producción.",
-        "Implementación de patrón de configuración dinámica NiFi + Atlas que permite gestionar cientos de tablas sin modificar el código del pipeline."
-      ],
-      dataTypes: [
-        "Transacciones ATM", "Pagos digitales (MODO)",
-        "Saldos contables", "Movimientos bancarios",
-        "Métricas de canales digitales (HBI)", "Tarjetas de crédito/débito"
-      ]
-    },
-
-    neoris: {
-      role: "Desarrollador .NET Back-End",
-      period: "Febrero 2023 - Agosto 2023",
-      responsibilities: [
-        "Desarrollo de servicios backend con C#/.NET y SQL Server para integración y manipulación de datos empresariales.",
-        "Optimización de consultas SQL para mejorar rendimiento y escalabilidad.",
-        "Implementación de procesos de automatización de datos.",
-        "Colaboración con equipos de datos y desarrollo."
-      ],
-      tech: ["C#", ".NET", "SQL Server", "APIs REST"]
-    }
-  },
-
-  skills: {
-    primary: ["SQL avanzado", "Apache Hive", "Apache Impala", "Apache NiFi"],
-    secondary: ["Apache Atlas", "Apache Kudu", "HDFS", "Kafka", "Cloudera"],
-    inProgress: ["Azure Data Engineering", "Databricks"],
-    soft: ["Gobierno de datos", "Relevamiento funcional", "Resolución de incidencias productivas", "Comunicación con stakeholders"]
-  },
-
-  architecture: {
-    layers: [
-      { name: "Raw (1raw)", storage: "HDFS", description: "Datos crudos en STRING, tablas externas, formato Parquet, particionado por fecha_proceso" },
-      { name: "Curado (2cur)", storage: "HDFS", description: "Casteo de tipos, limpieza y normalización, tablas externas" },
-      { name: "Refinado (3ref)", storage: "HDFS", description: "Reglas de negocio aplicadas, tablas externas" },
-      { name: "Consumo (4con)", storage: "Kudu", description: "Datos actualizables, baja latencia, tablas internas" },
-      { name: "Datamart", storage: "Kudu", description: "Producto final para reporting y BI, tablas internas" }
-    ],
-    pattern: "NiFi detecta archivo → consulta Atlas Term → ejecuta flujo dinámico → Hive transforma → Kafka señaliza capa completa → siguiente capa procesa"
-  },
-
-  goals: {
-    roles: [
-      "Semi Senior Data Engineer",
-      "Data Engineer SSR/SR",
-      "Cloud Data Engineer",
-      "Analytics Engineer"
-    ],
-    direction: "Consolidar stack moderno: Python + PySpark + Azure + dbt"
-  }
-};
-
-// --- MAPPING FOR UI COMPATIBILITY ---
-
-export const profile: Profile = {
-  name: knowledge.profile.name,
-  role: knowledge.profile.role,
-  bio: knowledge.profile.summary,
-  yearsExperience: knowledge.profile.experience,
-  location: knowledge.profile.location,
+// ── Profile ──────────────────────────────────────────────────────
+export const profile = {
+  name: "Adrián Agüero",
+  role: "Semi Senior Data Engineer",
   email: "aguero.adrian.data@gmail.com",
+  location: "Buenos Aires · AMBA",
+  workMode: "Remoto o Híbrido",
+  englishLevel: "A2 (en formación)",
+  relocation: "No",
   links: {
     github: "https://github.com/AdrianAguero",
     linkedin: "https://www.linkedin.com/in/adri%C3%A1n-ag%C3%BCero/",
     email: "mailto:aguero.adrian.data@gmail.com",
-    cv: knowledge.profile.cv
-  }
+    cv: "https://drive.google.com/file/d/1QViXff7nz_KPYf1wg45tnNiktXzLytGG/view?usp=sharing",
+  },
+  summary:
+    "Semi Senior Data Engineer con más de 2 años construyendo y manteniendo pipelines ETL end-to-end en ecosistemas Hadoop/Cloudera para el sector bancario. Especializado en Apache NiFi, Hive, Impala, SQL avanzado y gobierno de datos con Apache Atlas sobre arquitecturas Data Lake tipo Medallion de 5 capas.",
 };
 
-export const skills: SkillCategory[] = [
+// ── Experience ───────────────────────────────────────────────────
+export interface Role {
+  role: string;
+  period: string;
+  length: string;
+  current: boolean;
+  highlights: string[];
+}
+
+export interface Job {
+  id: string;
+  company: string;
+  sector: string;
+  tenure: string;
+  period: string;
+  badge: string | null;
+  summary: string;
+  roles: Role[];
+  tech: string[];
+}
+
+export const experience: Job[] = [
   {
-    name: "Core Stack (Productivo)",
-    skills: [...knowledge.skills.primary, ...knowledge.skills.secondary]
+    id: "helios",
+    company: "Helios System",
+    sector: "Banca",
+    tenure: "2 años 4 meses",
+    period: "Feb 2024 — May 2026",
+    badge: "Producción",
+    summary:
+      "Pipelines ETL end-to-end para los 4 bancos del Grupo Petersen (BER, BSJ, BSC, BSF) sobre Cloudera, con foco en calidad de datos, gobierno y resolución de incidencias críticas en producción.",
+    roles: [
+      {
+        role: "Semi Senior Data Engineer",
+        period: "Feb 2025 — Actualidad",
+        length: "1 año 5 meses",
+        current: true,
+        highlights: [
+          "Bug crítico en el pipeline de pagos MODO: recuperé datos históricos perdidos en los 4 bancos con un CTE deduplicado (ROW_NUMBER OVER PARTITION BY payment_id).",
+          "Reprocesamiento contable end-to-end para el cierre de saldos bancarios, sin impacto en producción.",
+          "Diseñé la tabla de métricas mensuales HBI con manejo de late-arriving data y ventana de lookback.",
+          "Análisis de causa raíz de incidentes productivos sobre Cloudera/Hadoop.",
+        ],
+      },
+      {
+        role: "Data Engineer",
+        period: "Feb 2024 — Feb 2025",
+        length: "1 año",
+        current: false,
+        highlights: [
+          "Desarrollo de pipelines ETL end-to-end en el ecosistema Hadoop (Hive, Impala, NiFi, Atlas).",
+          "Ingesta dinámica con NiFi + Atlas: cientos de tablas gestionadas sin tocar el código del pipeline.",
+          "Estandarización, casteo y reglas de negocio sobre grandes volúmenes de datos bancarios.",
+          "Dominios: ATM, contabilidad, tarjetas, canales digitales (HBI) y pagos digitales (MODO).",
+        ],
+      },
+    ],
+    tech: ["Apache NiFi", "Apache Hive", "Apache Impala", "Apache Atlas", "Apache Kudu", "HDFS", "Kafka", "Cloudera"],
   },
   {
-    name: "En Formación Activa",
-    skills: knowledge.skills.inProgress
+    id: "neoris",
+    company: "Neoris",
+    sector: "Software",
+    tenure: "7 meses",
+    period: "Feb 2023 — Ago 2023",
+    badge: null,
+    summary:
+      "Servicios backend con C#/.NET y SQL Server para integración de datos empresariales. Primer contacto con SQL productivo y arquitecturas de integración.",
+    roles: [
+      {
+        role: "Desarrollador .NET Back-End",
+        period: "Feb 2023 — Ago 2023",
+        length: "7 meses",
+        current: false,
+        highlights: [
+          "Desarrollo y mantenimiento de APIs REST con C#/.NET.",
+          "Optimización de consultas SQL Server en sistemas productivos.",
+          "Automatización de procesos de datos reduciendo intervención manual.",
+        ],
+      },
+    ],
+    tech: ["C#", ".NET", "SQL Server", "APIs REST"],
   },
-  {
-    name: "Soft Skills",
-    skills: knowledge.skills.soft
-  }
 ];
 
-export const projects: Project[] = [
-  {
-    id: "exp_helios_ssr",
-    title: "Repositorio Único — Grupo Petersen (SSR)",
-    description: "Liderazgo técnico de pipelines ETL productivos para los 4 bancos del Grupo Petersen (BER, BSJ, BSC, BSF), con foco en calidad de datos, gobierno y resolución de incidencias críticas en producción.",
-    techStack: ["Apache NiFi", "Apache Atlas", "HiveQL", "Apache Impala", "Kafka", "Elastic Stack"],
-    status: "COMPLETED",
-    diagramType: "ETL",
-    period: "Febrero 2025 - Mayo 2026",
-    role: "Semi Senior Data Engineer",
-    badge: "Producción",
-    highlights: [
-      "Bug crítico en pipeline MODO: recuperación de datos históricos con CTE deduplicado (ROW_NUMBER)",
-      "Reprocesamiento contable end-to-end multicapa para cierre de saldos bancarios",
-      "Diseño de tabla de métricas HBI mensual con manejo de late-arriving data",
-      "Patrón NiFi + Atlas: configuración dinámica para cientos de tablas sin modificar código",
-      "Coordinación con stakeholders bancarios y validación pre-producción"
-    ]
-  },
-  {
-    id: "exp_helios_jr",
-    title: "Repositorio Único — Grupo Petersen (DE)",
-    description: "Desarrollo de pipelines ETL end-to-end sobre Data Lake Medallion de 5 capas en Cloudera para los 4 bancos del Grupo Petersen. Ingesta, transformación y gobierno de datos de múltiples dominios bancarios.",
-    techStack: ["Apache NiFi", "Apache Hive", "Apache Impala", "Apache Atlas", "Apache Kudu", "HDFS", "Cloudera"],
-    status: "COMPLETED",
-    diagramType: "ETL",
-    period: "Febrero 2024 - Febrero 2025",
-    role: "Data Engineer",
-    badge: "Batch ETL",
-    highlights: [
-      "Arquitectura Data Lake Medallion: Raw → Curado → Refinado → Consumo → Datamart",
-      "Ingesta con NiFi: flujos dinámicos configurados vía Atlas Terms en params_ingestas",
-      "Dominios: ATM, Contabilidad, Tarjetas (TC), Canales HBI, Pagos Digitales (MODO)",
-      "HDFS (Raw-Refinado, tablas externas) + Kudu (Consumo-Datamart, tablas internas)",
-      "Integración de 4 bancos con estructuras de origen heterogéneas"
-    ],
-    architectureFlow: [
-      { name: "Fuentes Bancarias", icon: "database" },
-      { name: "WinSCP/SFTP", icon: "server" },
-      { name: "NiFi + Atlas", icon: "workflow" },
-      { name: "HDFS (Raw→Ref)", icon: "hard-drive" },
-      { name: "Kudu (Datamart)", icon: "database" }
-    ]
-  },
-  {
-    id: "exp_neoris",
-    title: "Neoris — Backend .NET",
-    description: "Desarrollo de servicios backend con C#/.NET y SQL Server para integración de datos empresariales. Primer contacto con SQL productivo y arquitecturas de integración.",
-    techStack: ["C#", ".NET", "SQL Server", "APIs REST"],
-    status: "COMPLETED",
-    diagramType: "WAREHOUSE",
-    period: "Febrero 2023 - Agosto 2023",
-    role: "Desarrollador .NET Back-End",
-    highlights: [
-      "Desarrollo y mantenimiento de APIs REST con C#/.NET",
-      "Optimización de consultas SQL Server en sistemas productivos",
-      "Automatización de procesos de datos reduciendo intervención manual"
-    ],
-    architectureFlow: [
-      { name: "API REST", icon: "globe" },
-      { name: ".NET", icon: "code" },
-      { name: "SQL Server", icon: "database" }
-    ]
-  }
-];
+// ── Stack ─────────────────────────────────────────────────────────
+export const stack = {
+  core: ["SQL avanzado", "Apache Hive", "Apache Impala", "Apache NiFi"],
+  platform: ["Apache Atlas", "Apache Kudu", "HDFS", "Kafka", "Cloudera", "Elastic Stack"],
+  learning: ["Azure Data Engineering", "Databricks", "dbt"],
+};
+
+// ── Certifications ────────────────────────────────────────────────
+export interface Certification {
+  name: string;
+  issuer: string;
+  year: string;
+  area: string;
+}
 
 export const certifications: Certification[] = [
-  {
-    name: "Azure Data Engineer Associate (DP-203)",
-    issuer: "Microsoft",
-    date: "Objetivo 2026",
-    url: ""
-  },
-  {
-    name: "Databricks Certified Data Engineer Associate",
-    issuer: "Databricks",
-    date: "Objetivo 2026",
-    url: ""
-  }
+  { name: "SQL (Advanced)", issuer: "HackerRank", year: "2024", area: "Datos" },
+  { name: "AZ-900: Azure Fundamentals", issuer: "Microsoft", year: "2025", area: "Cloud" },
+  { name: "DP-900: Azure Data Fundamentals", issuer: "Microsoft", year: "2025", area: "Cloud" },
+  { name: "Git & GitHub", issuer: "Platzi", year: "2023", area: "Herramientas" },
 ];
+
+export interface CertInProgress {
+  name: string;
+  issuer: string;
+  date: string;
+}
+
+export const certs: CertInProgress[] = [
+  { name: "Azure Data Engineer Associate (DP-203)", issuer: "Microsoft", date: "Objetivo 2026" },
+  { name: "Databricks Certified Data Engineer Associate", issuer: "Databricks", date: "Objetivo 2026" },
+];
+
+// ── Chat suggested questions ──────────────────────────────────────
+export const SUGGESTED = [
+  { q: "¿Cuál es tu stack principal?" },
+  { q: "Contame tu logro más difícil" },
+  { q: "¿Qué experiencia tenés en banca?" },
+  { q: "¿Estás disponible para trabajar?" },
+];
+
+// ── Legacy exports (kept for backwards compat) ────────────────────
+export const knowledge = {
+  profile: {
+    name: profile.name,
+    role: profile.role,
+    experience: "+2 años en banca",
+    location: profile.location,
+    englishLevel: profile.englishLevel,
+    workMode: profile.workMode,
+    relocation: profile.relocation,
+    cv: profile.links.cv,
+    summary: profile.summary,
+  },
+  workExperience: {
+    helios: {
+      role: "Semi Senior Data Engineer",
+      period: "Febrero 2024 - Mayo 2026",
+      responsibilities: experience[0].roles.flatMap(r => r.highlights),
+      tech: experience[0].tech,
+      achievements: experience[0].roles[0].highlights,
+      dataTypes: ["Transacciones ATM", "Pagos digitales (MODO)", "Saldos contables", "Métricas HBI", "Tarjetas"],
+    },
+    neoris: {
+      role: "Desarrollador .NET Back-End",
+      period: "Febrero 2023 - Agosto 2023",
+      responsibilities: experience[1].roles[0].highlights,
+      tech: experience[1].tech,
+    },
+  },
+  skills: {
+    primary: stack.core,
+    secondary: stack.platform,
+    inProgress: stack.learning,
+    soft: ["Gobierno de datos", "Relevamiento funcional", "Resolución de incidencias productivas"],
+  },
+  goals: {
+    roles: ["Semi Senior Data Engineer", "Cloud Data Engineer", "Analytics Engineer"],
+    direction: "Consolidar stack moderno: Azure + Databricks + dbt",
+  },
+};

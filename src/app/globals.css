@@ -1,21 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #F1F5F9;
-  --color-card: #FFFFFF;
-  --color-border: #CBD5E1;
-  --color-textMain: #0F172A;
-  --color-textSec: #374151;
-  --color-accentGreen: #059669;
-  --color-accentCyan: #0284C7;
+  --color-background: #0E1116;
+  --color-panel: #161A21;
+  --color-panel2: #1B2029;
+  --color-line: #262C37;
+  --color-textMain: #E7EAEF;
+  --color-textSec: #8C95A3;
+  --color-faint: #5B6472;
+  --color-mint: #3FD79A;
+  --color-mintSoft: rgba(63, 215, 154, 0.10);
+  --color-cyan: #6FB6DE;
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-fira-code), ui-monospace, SFMono-Regular, monospace;
+  /* legacy aliases used by existing components */
+  --color-card: #161A21;
+  --color-border: #262C37;
+  --color-accentGreen: #3FD79A;
+  --color-accentCyan: #6FB6DE;
+
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-serif: "IBM Plex Serif", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 
 :root {
-  --background: #F1F5F9;
-  --foreground: #0F172A;
+  --background: #0E1116;
+  --foreground: #E7EAEF;
 }
 
 body {
@@ -26,27 +36,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #0E1116; }
+::-webkit-scrollbar-thumb { background: #262C37; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #5B6472; }
 
-::-webkit-scrollbar-track {
-  background: #F3F4F6;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #D1D5DB;
-  border-radius: 5px;
-  border: 2px solid #F3F4F6;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #9CA3AF;
-}
-
-/* Utilities */
-.terminal-text {
-  font-family: var(--font-mono);
+@keyframes dotPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
 }
