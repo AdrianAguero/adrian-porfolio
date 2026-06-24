@@ -7,7 +7,19 @@ import { headers } from 'next/headers';
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
-  // 1. Rate Limiting
+  // 1. Verificar que el request viene del propio dominio
+  const origin = req.headers.get('origin') || '';
+  const referer = req.headers.get('referer') || '';
+  const allowedOrigins = [
+    'https://adrian-porfolio.vercel.app',
+    'http://localhost:3000',
+  ];
+  const isAllowed = allowedOrigins.some(o => origin.startsWith(o) || referer.startsWith(o));
+  if (!isAllowed) {
+    return new Response('Forbidden', { status: 403 });
+  }
+
+  // 2. Rate Limiting (best-effort con Redis; si falla, el origen check protege igual)
   const ip = (await headers()).get('x-forwarded-for') || '127.0.0.1';
   const { success, limit, remaining, reset } = await checkRateLimit(ip);
 
