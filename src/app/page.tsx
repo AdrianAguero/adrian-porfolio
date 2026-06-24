@@ -279,7 +279,7 @@ export default function Home() {
 
       {/* ── HERO ── */}
       <section>
-        <div style={{ ...W, display: "grid", gridTemplateColumns: "0.82fr 1.5fr", gap: 44, padding: "56px 56px 48px", alignItems: "center" }}>
+        <div style={{ ...W, display: "grid", gridTemplateColumns: "0.82fr 1.5fr", gap: 44, padding: "56px 56px 48px", alignItems: "flex-start" }}>
           {/* Left: identity */}
           <div>
             {/* A1: foto más grande */}
@@ -325,7 +325,7 @@ export default function Home() {
           {/* Right: chat */}
           <div>
             <h2 style={{ fontFamily: "var(--font-serif)", fontSize: 28, fontWeight: 600, color: "#E7EAEF", margin: "0 0 14px", letterSpacing: "-0.01em" }}>
-              ¿Apurado? Preguntale a mi IA.
+              Conocé mi perfil con ayuda de IA.
             </h2>
             <Chatbot startBoot={true} />
           </div>
