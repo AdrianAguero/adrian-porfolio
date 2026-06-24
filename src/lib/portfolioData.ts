@@ -45,7 +45,7 @@ export const experience: Job[] = [
     sector: "Banca",
     tenure: "2 años 4 meses",
     period: "Feb 2024 — May 2026",
-    badge: "Producción",
+    badge: "Actual",
     summary:
       "Pipelines ETL end-to-end para los 4 bancos del Grupo Petersen (BER, BSJ, BSC, BSF) sobre Cloudera, con foco en calidad de datos, gobierno y resolución de incidencias críticas en producción.",
     roles: [
@@ -55,10 +55,10 @@ export const experience: Job[] = [
         length: "1 año 5 meses",
         current: true,
         highlights: [
-          "Bug crítico en el pipeline de pagos MODO: recuperé datos históricos perdidos en los 4 bancos con un CTE deduplicado (ROW_NUMBER OVER PARTITION BY payment_id).",
-          "Reprocesamiento contable end-to-end para el cierre de saldos bancarios, sin impacto en producción.",
-          "Diseñé la tabla de métricas mensuales HBI con manejo de late-arriving data y ventana de lookback.",
-          "Análisis de causa raíz de incidentes productivos sobre Cloudera/Hadoop.",
+          "Responsable de la confiabilidad y calidad de los datos en pipelines productivos para los 4 bancos del Grupo Petersen.",
+          "Resolución de incidentes críticos en producción y análisis de causa raíz sobre el ecosistema Cloudera/Hadoop.",
+          "Diseño de nuevas estructuras de datos y métricas de negocio según requerimientos de las áreas funcionales.",
+          "Coordinación directa con stakeholders bancarios para relevamiento, validación y mejora continua de los procesos de datos.",
         ],
       },
       {
@@ -67,10 +67,10 @@ export const experience: Job[] = [
         length: "1 año",
         current: false,
         highlights: [
-          "Desarrollo de pipelines ETL end-to-end en el ecosistema Hadoop (Hive, Impala, NiFi, Atlas).",
-          "Ingesta dinámica con NiFi + Atlas: cientos de tablas gestionadas sin tocar el código del pipeline.",
-          "Estandarización, casteo y reglas de negocio sobre grandes volúmenes de datos bancarios.",
-          "Dominios: ATM, contabilidad, tarjetas, canales digitales (HBI) y pagos digitales (MODO).",
+          "Desarrollo y mantenimiento de pipelines ETL end-to-end sobre arquitectura Data Lake en el ecosistema Hadoop.",
+          "Integración de múltiples fuentes bancarias con estructuras heterogéneas en una plataforma analítica unificada.",
+          "Estandarización, transformación y aplicación de reglas de negocio sobre grandes volúmenes de datos.",
+          "Gobierno y trazabilidad de datos en múltiples dominios: ATM, contabilidad, tarjetas, canales digitales (HBI) y pagos digitales (MODO).",
         ],
       },
     ],
@@ -113,27 +113,38 @@ export const stack = {
 export interface Certification {
   name: string;
   issuer: string;
-  year: string;
-  area: string;
+  date: string;
+  category: string;
+  pdfUrl: string;
+  status: "obtenida" | "en_curso";
 }
 
 export const certifications: Certification[] = [
-  { name: "SQL (Advanced)", issuer: "HackerRank", year: "2024", area: "Datos" },
-  { name: "AZ-900: Azure Fundamentals", issuer: "Microsoft", year: "2025", area: "Cloud" },
-  { name: "DP-900: Azure Data Fundamentals", issuer: "Microsoft", year: "2025", area: "Cloud" },
-  { name: "Git & GitHub", issuer: "Platzi", year: "2023", area: "Herramientas" },
+  // SQL
+  { name: "Intermediate SQL", issuer: "DataCamp", date: "Ago 2024", category: "SQL", pdfUrl: "/certificates/datacamp-intermediate-sql.pdf", status: "obtenida" },
+  { name: "Joining Data in SQL", issuer: "DataCamp", date: "Ago 2024", category: "SQL", pdfUrl: "/certificates/datacamp-joining-data-sql.pdf", status: "obtenida" },
+  { name: "Data Manipulation in SQL", issuer: "DataCamp", date: "Feb 2025", category: "SQL", pdfUrl: "/certificates/datacamp-data-manipulation-sql.pdf", status: "obtenida" },
+  // Modelado y Data Engineering
+  { name: "Database Design", issuer: "DataCamp", date: "Jun 2026", category: "Modelado y Data Engineering", pdfUrl: "/certificates/datacamp-database-design.pdf", status: "obtenida" },
+  { name: "Data Warehousing Concepts", issuer: "DataCamp", date: "Jun 2026", category: "Modelado y Data Engineering", pdfUrl: "/certificates/datacamp-data-warehousing.pdf", status: "obtenida" },
+  { name: "Understanding Data Engineering", issuer: "DataCamp", date: "Jul 2024", category: "Modelado y Data Engineering", pdfUrl: "/certificates/datacamp-understanding-data-engineering.pdf", status: "obtenida" },
+  // Python
+  { name: "Python para Análisis de Datos", issuer: "EducaciónIT", date: "Jul 2024", category: "Python", pdfUrl: "/certificates/educacionit-python-analisis-datos.pdf", status: "obtenida" },
+  { name: "Python Avanzado", issuer: "EducaciónIT", date: "Jun 2024", category: "Python", pdfUrl: "/certificates/educacionit-python-avanzado.pdf", status: "obtenida" },
+  { name: "Introducción al Paradigma de Objetos", issuer: "EducaciónIT", date: "Ago 2023", category: "Python", pdfUrl: "/certificates/educacionit-paradigma-objetos.pdf", status: "obtenida" },
+  // Herramientas
+  { name: "Git: Desarrollo Colaborativo", issuer: "EducaciónIT", date: "Oct 2023", category: "Herramientas", pdfUrl: "/certificates/educacionit-git.pdf", status: "obtenida" },
+  { name: "MongoDB Fundamentos", issuer: "EducaciónIT", date: "Oct 2023", category: "Herramientas", pdfUrl: "/certificates/educacionit-mongodb.pdf", status: "obtenida" },
+  // Formación Académica
+  { name: "Tec. Universitaria en Hemoterapia e Inmunohematología", issuer: "Universidad de Buenos Aires", date: "2021", category: "Formación Académica", pdfUrl: "/certificates/titulo-uba.pdf", status: "obtenida" },
+  // En curso
+  { name: "Associate Data Engineer in SQL", issuer: "DataCamp", date: "En curso", category: "En curso", pdfUrl: "", status: "en_curso" },
+  { name: "Azure Data Engineer Associate (DP-203)", issuer: "Microsoft", date: "Objetivo 2026", category: "En curso", pdfUrl: "", status: "en_curso" },
+  { name: "Databricks Certified Data Engineer Associate", issuer: "Databricks", date: "Objetivo 2026", category: "En curso", pdfUrl: "", status: "en_curso" },
 ];
 
-export interface CertInProgress {
-  name: string;
-  issuer: string;
-  date: string;
-}
-
-export const certs: CertInProgress[] = [
-  { name: "Azure Data Engineer Associate (DP-203)", issuer: "Microsoft", date: "Objetivo 2026" },
-  { name: "Databricks Certified Data Engineer Associate", issuer: "Databricks", date: "Objetivo 2026" },
-];
+// keep certs alias for legacy usage
+export const certs = certifications.filter(c => c.status === "en_curso");
 
 // ── Chat suggested questions ──────────────────────────────────────
 export const SUGGESTED = [

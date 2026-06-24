@@ -12,20 +12,26 @@ export default function Chatbot({ startBoot: _ = false }: { startBoot?: boolean 
   const streamRef = useRef<HTMLSpanElement>(null);
   const accumulated = useRef("");
 
-  const [messages, setMessages] = useState<Msg[]>(() => {
+  const [messages, setMessages] = useState<Msg[]>([]);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
     try {
-      const s = typeof window !== "undefined" ? localStorage.getItem(CHAT_KEY) : null;
-      return s ? JSON.parse(s) : [];
-    } catch { return []; }
-  });
+      const s = localStorage.getItem(CHAT_KEY);
+      if (s) setMessages(JSON.parse(s));
+    } catch { /* ignore */ }
+    setHydrated(true);
+  }, []);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!hydrated) return;
     if (messages.length > 0) localStorage.setItem(CHAT_KEY, JSON.stringify(messages.slice(-50)));
-  }, [messages]);
+    else localStorage.removeItem(CHAT_KEY);
+  }, [messages, hydrated]);
 
   const scrollBottom = useCallback(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
