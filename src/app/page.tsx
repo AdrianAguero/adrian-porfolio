@@ -282,33 +282,29 @@ export default function Home() {
         <div style={{ ...W, display: "grid", gridTemplateColumns: "0.82fr 1.5fr", gap: 44, padding: "56px 56px 48px", alignItems: "flex-start" }}>
           {/* Left: identity */}
           <div>
-            {/* A1: foto más grande */}
             <Image
               src="/adrian.png"
               alt="Adrián Agüero"
-              width={172}
-              height={172}
-              style={{ borderRadius: 14, border: "1px solid rgba(63,215,154,.2)", marginBottom: 24, objectFit: "cover" }}
+              width={148}
+              height={148}
+              style={{ borderRadius: 14, border: "1px solid rgba(63,215,154,.2)", marginBottom: 18, objectFit: "cover" }}
             />
-            {/* A2: texto más descriptivo */}
             <Eyebrow color="#3FD79A">Buenos Aires · Data Engineer</Eyebrow>
-            <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 46, lineHeight: 1.08, fontWeight: 600, color: "#E7EAEF", letterSpacing: "-0.02em", margin: "16px 0 20px" }}>
+            <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 42, lineHeight: 1.08, fontWeight: 600, color: "#E7EAEF", letterSpacing: "-0.02em", margin: "12px 0 16px" }}>
               Pipelines de datos <span style={{ fontStyle: "italic", color: "#3FD79A" }}>confiables</span>.
             </h1>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: 16.5, lineHeight: 1.65, color: "#8C95A3", margin: "0 0 26px" }}>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: 15.5, lineHeight: 1.6, color: "#8C95A3", margin: "0 0 20px" }}>
               +2 años manteniendo pipelines ETL end-to-end sobre Hadoop/Cloudera para 4 bancos del Grupo Petersen. Foco en calidad, trazabilidad e incidencias críticas.
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, borderTop: "1px solid #262C37", paddingTop: 22 }}>
-              {/* E: email como botón destacado */}
+            <div style={{ borderTop: "1px solid #262C37", paddingTop: 18, display: "flex", flexDirection: "column", gap: 10 }}>
               <a
                 href={`mailto:${profile.email}`}
                 style={{
                   display: "inline-flex", alignItems: "center", gap: 8,
-                  fontFamily: "var(--font-mono)", fontSize: 13, color: "#3FD79A",
+                  fontFamily: "var(--font-mono)", fontSize: 12.5, color: "#3FD79A",
                   background: "rgba(63,215,154,.08)", border: "1px solid rgba(63,215,154,.25)",
-                  borderRadius: 8, padding: "10px 14px", textDecoration: "none",
-                  transition: "background .15s, border-color .15s",
-                  width: "fit-content",
+                  borderRadius: 8, padding: "9px 13px", textDecoration: "none",
+                  transition: "background .15s, border-color .15s", width: "fit-content",
                 }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(63,215,154,.15)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(63,215,154,.5)"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "rgba(63,215,154,.08)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(63,215,154,.25)"; }}
