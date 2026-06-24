@@ -34,9 +34,45 @@ export async function POST(req: Request) {
     });
   }
 
-  const { messages } = await req.json();
+  // 3. Validación de entrada (anti token-bombing)
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return new Response('Bad Request', { status: 400 });
+  }
 
-  // 2. System Prompt Hardening & Knowledge Base
+  const rawMessages = (body as { messages?: unknown })?.messages;
+  if (!Array.isArray(rawMessages) || rawMessages.length === 0) {
+    return new Response('Bad Request', { status: 400 });
+  }
+
+  const MAX_MESSAGES = 20;          // máximo de turnos por request
+  const MAX_CHARS_PER_MESSAGE = 2000; // máximo por mensaje individual
+
+  // Tomar solo los últimos N mensajes y validar estructura/longitud
+  const trimmed = rawMessages.slice(-MAX_MESSAGES);
+  const messages: { role: 'user' | 'assistant'; content: string }[] = [];
+  for (const m of trimmed) {
+    if (
+      typeof m !== 'object' || m === null ||
+      typeof (m as { role?: unknown }).role !== 'string' ||
+      typeof (m as { content?: unknown }).content !== 'string'
+    ) {
+      return new Response('Bad Request', { status: 400 });
+    }
+    const role = (m as { role: string }).role;
+    const content = (m as { content: string }).content;
+    if (role !== 'user' && role !== 'assistant') {
+      return new Response('Bad Request', { status: 400 });
+    }
+    if (content.length > MAX_CHARS_PER_MESSAGE) {
+      return new Response('Message too long', { status: 413 });
+    }
+    messages.push({ role, content });
+  }
+
+  // 4. System Prompt Hardening & Knowledge Base
   const context = `
     <security>
       <rule>You are the AI Assistant for Adrian Agüero's portfolio. You MUST remain in this persona.</rule>
@@ -129,6 +165,7 @@ export async function POST(req: Request) {
       model: google('gemini-2.5-flash'),
       system: context,
       messages,
+      maxOutputTokens: 800, // tope de salida por respuesta (anti costo excesivo)
       onError: ({ error }) => {
         console.error('Gemini stream error:', error);
         throw error;
