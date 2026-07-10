@@ -94,7 +94,7 @@ export default function Chatbot({ startBoot: _ = false }: { startBoot?: boolean 
   const showWelcome = messages.length === 0 && !streaming;
 
   return (
-    <div style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 14, overflow: "hidden", display: "flex", flexDirection: "column", height: 498, boxShadow: "0 24px 64px rgba(0,0,0,.4)" }}>
+    <div className="chat-panel" style={{ background: C.panel, border: `1px solid ${C.line}`, borderRadius: 14, overflow: "hidden", display: "flex", flexDirection: "column", boxShadow: "0 24px 64px rgba(0,0,0,.4)" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: 11, padding: "16px 22px", borderBottom: `1px solid ${C.line}` }}>
         <span style={{ width: 9, height: 9, borderRadius: 9, background: C.mint, boxShadow: `0 0 8px ${C.mint}`, flexShrink: 0 }} />

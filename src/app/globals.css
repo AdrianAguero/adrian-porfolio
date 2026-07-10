@@ -45,3 +45,61 @@ body {
   0%, 100% { opacity: 0.3; }
   50% { opacity: 1; }
 }
+
+/* ── Responsive layout ── */
+.section-px {
+  padding-left: 56px;
+  padding-right: 56px;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 0.82fr 1.5fr;
+  gap: 44px;
+  align-items: flex-start;
+}
+
+.stack-row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 24px;
+}
+
+.exp-card {
+  padding: 26px 28px;
+}
+
+.chat-panel {
+  height: 498px;
+}
+
+@media (max-width: 860px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-px {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-px {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .stack-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .exp-card {
+    padding: 18px 16px;
+  }
+  .chat-panel {
+    height: 460px;
+  }
+}

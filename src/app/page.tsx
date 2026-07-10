@@ -47,12 +47,12 @@ function ExpCard({ job }: { job: typeof experience[0] }) {
     <div style={{
       background: "#161A21",
       border: `1px solid ${isActual ? "rgba(63,215,154,.25)" : "#262C37"}`,
-      borderRadius: 14, padding: "26px 28px",
+      borderRadius: 14,
       boxShadow: isActual ? "0 0 32px rgba(63,215,154,.05)" : "none",
-    }}>
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, paddingBottom: 18, borderBottom: "1px solid #262C37" }}>
+    }} className="exp-card">
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", justifyContent: "space-between", gap: 16, paddingBottom: 18, borderBottom: "1px solid #262C37" }}>
         <div>
-          <h3 style={{ fontFamily: "var(--font-serif)", fontSize: 25, fontWeight: 600, color: "#E7EAEF", margin: "0 0 5px", letterSpacing: "-0.01em" }}>{job.company}</h3>
+          <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(20px, 3.2vw, 25px)", fontWeight: 600, color: "#E7EAEF", margin: "0 0 5px", letterSpacing: "-0.01em" }}>{job.company}</h3>
           <div style={{ fontFamily: "var(--font-sans)", fontSize: 14, color: "#6FB6DE" }}>
             Sector Bancario · {job.tenure}
           </div>
@@ -222,9 +222,9 @@ function CertificationsSection() {
 
   return (
     <section>
-      <div style={{ ...W, padding: "44px 56px 32px" }}>
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", borderBottom: "1px solid #262C37", paddingBottom: 16, marginBottom: 8 }}>
-          <h2 style={{ fontFamily: "var(--font-serif)", fontSize: 32, fontWeight: 600, color: "#E7EAEF", margin: 0, letterSpacing: "-0.01em" }}>Certificaciones</h2>
+      <div className="section-px" style={{ ...W, paddingTop: 44, paddingBottom: 32 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", justifyContent: "space-between", gap: 8, borderBottom: "1px solid #262C37", paddingBottom: 16, marginBottom: 8 }}>
+          <h2 style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(24px, 4vw, 32px)", fontWeight: 600, color: "#E7EAEF", margin: 0, letterSpacing: "-0.01em" }}>Certificaciones</h2>
           <Eyebrow>{obtained.length} obtenidas · {inProgress.length} en curso</Eyebrow>
         </div>
 
@@ -254,13 +254,13 @@ export default function Home() {
 
       {/* ── HEADER ── */}
       <header style={{ borderBottom: "1px solid #262C37" }}>
-        <div style={{ ...W, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "24px 56px" }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
+        <div className="section-px" style={{ ...W, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 14, paddingTop: 24, paddingBottom: 24 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", gap: 12 }}>
             <span style={{ fontFamily: "var(--font-serif)", fontSize: 19, fontWeight: 600, color: "#E7EAEF" }}>Adrián Agüero</span>
             {/* A3: más visible, color intermedio */}
             <Eyebrow color="#8C95A3">Data Engineer</Eyebrow>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 26 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 18 }}>
             <span style={{ fontFamily: "var(--font-sans)", fontSize: 13.5, color: "#3FD79A", display: "flex", alignItems: "center", gap: 7 }}>
               <span style={{ width: 7, height: 7, borderRadius: 7, background: "#3FD79A", display: "inline-block", animation: "dotPulse 1.4s ease-in-out infinite" }} />
               Disponible
@@ -279,7 +279,7 @@ export default function Home() {
 
       {/* ── HERO ── */}
       <section>
-        <div style={{ ...W, display: "grid", gridTemplateColumns: "0.82fr 1.5fr", gap: 44, padding: "56px 56px 48px", alignItems: "flex-start" }}>
+        <div className="section-px hero-grid" style={{ ...W, paddingTop: 56, paddingBottom: 48 }}>
           {/* Left: identity */}
           <div>
             <Image
@@ -290,7 +290,7 @@ export default function Home() {
               style={{ borderRadius: 14, border: "1px solid rgba(63,215,154,.2)", marginBottom: 18, objectFit: "cover" }}
             />
             <Eyebrow color="#3FD79A">Buenos Aires · Data Engineer</Eyebrow>
-            <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 42, lineHeight: 1.08, fontWeight: 600, color: "#E7EAEF", letterSpacing: "-0.02em", margin: "12px 0 16px" }}>
+            <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(28px, 6vw, 42px)", lineHeight: 1.1, fontWeight: 600, color: "#E7EAEF", letterSpacing: "-0.02em", margin: "12px 0 16px" }}>
               Pipelines de datos <span style={{ fontStyle: "italic", color: "#3FD79A" }}>confiables</span>.
             </h1>
             <p style={{ fontFamily: "var(--font-sans)", fontSize: 15.5, lineHeight: 1.6, color: "#8C95A3", margin: "0 0 20px" }}>
@@ -320,7 +320,7 @@ export default function Home() {
 
           {/* Right: chat */}
           <div>
-            <h2 style={{ fontFamily: "var(--font-serif)", fontSize: 28, fontWeight: 600, color: "#E7EAEF", margin: "0 0 14px", letterSpacing: "-0.01em" }}>
+            <h2 style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(20px, 4vw, 28px)", fontWeight: 600, color: "#E7EAEF", margin: "0 0 14px", letterSpacing: "-0.01em" }}>
               Conocé mi perfil con ayuda de IA.
             </h2>
             <Chatbot startBoot={true} />
@@ -330,9 +330,9 @@ export default function Home() {
 
       {/* ── EXPERIENCIA ── */}
       <section>
-        <div style={{ ...W, padding: "32px 56px 16px" }}>
-          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", borderBottom: "1px solid #262C37", paddingBottom: 16, marginBottom: 24 }}>
-            <h2 style={{ fontFamily: "var(--font-serif)", fontSize: 32, fontWeight: 600, color: "#E7EAEF", margin: 0, letterSpacing: "-0.01em" }}>Experiencia</h2>
+        <div className="section-px" style={{ ...W, paddingTop: 32, paddingBottom: 16 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", justifyContent: "space-between", gap: 8, borderBottom: "1px solid #262C37", paddingBottom: 16, marginBottom: 24 }}>
+            <h2 style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(24px, 4vw, 32px)", fontWeight: 600, color: "#E7EAEF", margin: 0, letterSpacing: "-0.01em" }}>Experiencia</h2>
             <Eyebrow>2023 — 2026</Eyebrow>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -346,14 +346,14 @@ export default function Home() {
 
       {/* ── STACK ── D: interactividad con StackPill */}
       <section>
-        <div style={{ ...W, padding: "44px 56px 16px" }}>
-          <h2 style={{ fontFamily: "var(--font-serif)", fontSize: 32, fontWeight: 600, color: "#E7EAEF", margin: "0 0 24px", letterSpacing: "-0.01em", borderBottom: "1px solid #262C37", paddingBottom: 16 }}>Stack</h2>
+        <div className="section-px" style={{ ...W, paddingTop: 44, paddingBottom: 16 }}>
+          <h2 style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(24px, 4vw, 32px)", fontWeight: 600, color: "#E7EAEF", margin: "0 0 24px", letterSpacing: "-0.01em", borderBottom: "1px solid #262C37", paddingBottom: 16 }}>Stack</h2>
           {([
             ["Lo que uso a diario", stack.core, true],
             ["Plataforma", stack.platform, false],
             ["En formación", stack.learning, false],
           ] as [string, string[], boolean][]).map(([title, items, accent]) => (
-            <div key={title} style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: 24, padding: "16px 0", borderBottom: "1px solid #262C37" }}>
+            <div key={title} className="stack-row" style={{ padding: "16px 0", borderBottom: "1px solid #262C37" }}>
               <span style={{ fontFamily: "var(--font-sans)", fontSize: 14.5, fontWeight: 600, color: accent ? "#C9D1D9" : "#8C95A3" }}>{title}</span>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {items.map((t) => <StackPill key={t} label={t} accent={accent} />)}
@@ -365,9 +365,9 @@ export default function Home() {
 
       {/* ── FOOTER ── E: email como botón */}
       <footer style={{ marginTop: 44, borderTop: "1px solid #262C37", background: "#161A21" }}>
-        <div style={{ ...W, padding: "48px 56px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 32 }}>
+        <div className="section-px" style={{ ...W, paddingTop: 48, paddingBottom: 48, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 24 }}>
           <div>
-            <div style={{ fontFamily: "var(--font-serif)", fontSize: 24, fontWeight: 600, color: "#E7EAEF", marginBottom: 14 }}>Hablemos.</div>
+            <div style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(20px, 3.5vw, 24px)", fontWeight: 600, color: "#E7EAEF", marginBottom: 14 }}>Hablemos.</div>
             <a
               href={`mailto:${profile.email}`}
               style={{
