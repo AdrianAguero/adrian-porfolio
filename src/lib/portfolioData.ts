@@ -14,7 +14,7 @@ export const profile = {
     cv: "https://drive.google.com/file/d/1QViXff7nz_KPYf1wg45tnNiktXzLytGG/view?usp=sharing",
   },
   summary:
-    "Semi Senior Data Engineer con más de 2 años construyendo y manteniendo pipelines ETL end-to-end en ecosistemas Hadoop/Cloudera para el sector bancario. Especializado en Apache NiFi, Hive, Impala, SQL avanzado y gobierno de datos con Apache Atlas sobre arquitecturas Data Lake tipo Medallion de 5 capas.",
+    "Semi Senior Data Engineer con más de 2 años construyendo y manteniendo pipelines ETL end-to-end sobre Cloudera. Experiencia en banca (4 bancos del Grupo Petersen) y actualmente en el sector energético (proyecto YPF en Taligent). Especializado en Apache NiFi, PySpark, Hive, Impala, SQL avanzado y gobierno de datos sobre arquitecturas Data Lake tipo Medallion.",
 };
 
 // ── Experience ───────────────────────────────────────────────────
@@ -40,20 +40,45 @@ export interface Job {
 
 export const experience: Job[] = [
   {
-    id: "helios",
-    company: "Helios System",
-    sector: "Banca",
-    tenure: "2 años 4 meses",
-    period: "Feb 2024 — May 2026",
+    id: "taligent",
+    company: "Taligent",
+    sector: "Energía",
+    tenure: "1 mes",
+    period: "Jul 2026 — Actualidad",
     badge: "Actual",
+    summary:
+      "Desarrollo end-to-end de productos de datos para YPF sobre Cloudera CDP.",
+    roles: [
+      {
+        role: "Data Engineer",
+        period: "Jul 2026 — Actualidad",
+        length: "1 mes",
+        current: true,
+        highlights: [
+          "Desarrollo end-to-end de productos de datos en ecosistema Cloudera CDP, desde el consumo e ingesta hasta la disponibilización para consumo analítico.",
+          "Construcción de pipelines de ingesta y transformación con Apache NiFi y PySpark.",
+          "Modelado dimensional y capas curadas; optimización de consultas SQL en Hive/Impala.",
+          "Aplicación de técnicas de calidad y gobierno de datos; diseño de pruebas y documentación técnica.",
+        ],
+      },
+    ],
+    tech: ["Cloudera CDP", "Apache NiFi", "PySpark", "Apache Hive", "Apache Impala", "SQL avanzado"],
+  },
+  {
+    id: "helios",
+    company: "Helios System (Smart Data Tech)",
+    sector: "Bancario",
+    tenure: "2 años 5 meses",
+    period: "Feb 2024 — Jul 2026",
+    badge: null,
     summary:
       "Pipelines ETL end-to-end para los 4 bancos del Grupo Petersen (BER, BSJ, BSC, BSF) sobre Cloudera, con foco en calidad de datos, gobierno y resolución de incidencias críticas en producción.",
     roles: [
       {
         role: "Semi Senior Data Engineer",
-        period: "Feb 2025 — Actualidad",
+        period: "Feb 2025 — Jul 2026",
         length: "1 año 5 meses",
-        current: true,
+        current: false,
         highlights: [
           "Responsable de la confiabilidad y calidad de los datos en pipelines productivos para los 4 bancos del Grupo Petersen.",
           "Resolución de incidentes críticos en producción y análisis de causa raíz sobre el ecosistema Cloudera/Hadoop.",
@@ -104,9 +129,9 @@ export const experience: Job[] = [
 
 // ── Stack ─────────────────────────────────────────────────────────
 export const stack = {
-  core: ["SQL avanzado", "Apache Hive", "Apache Impala", "Apache NiFi"],
-  platform: ["Apache Atlas", "Apache Kudu", "HDFS", "Kafka", "Cloudera", "Elastic Stack"],
-  learning: ["Azure Data Engineering", "Databricks", "dbt"],
+  core: ["SQL avanzado", "Apache Hive", "Apache Impala", "Apache NiFi", "PySpark (spark.sql)"],
+  platform: ["Apache Atlas", "Apache Kudu", "HDFS", "Kafka", "Cloudera", "Spark", "Elastic Stack"],
+  learning: ["Python (consolidando)", "PySpark (profundizar API de DataFrames)", "Azure Databricks"],
 };
 
 // ── Certifications ────────────────────────────────────────────────
@@ -138,6 +163,7 @@ export const certifications: Certification[] = [
   // Formación Académica
   { name: "Tec. Universitaria en Hemoterapia e Inmunohematología", issuer: "Universidad de Buenos Aires", date: "2021", category: "Formación Académica", pdfUrl: "/certificates/titulo-uba.pdf", status: "obtenida" },
   // En curso
+  { name: "Licenciatura en Ciencias de Datos", issuer: "UNAB", date: "En curso", category: "Formación Académica", pdfUrl: "", status: "en_curso" },
   { name: "Associate Data Engineer in SQL", issuer: "DataCamp", date: "En curso", category: "En curso", pdfUrl: "", status: "en_curso" },
   { name: "Azure Data Engineer Associate (DP-203)", issuer: "Microsoft", date: "Objetivo 2026", category: "En curso", pdfUrl: "", status: "en_curso" },
   { name: "Databricks Certified Data Engineer Associate", issuer: "Databricks", date: "Objetivo 2026", category: "En curso", pdfUrl: "", status: "en_curso" },
@@ -150,16 +176,20 @@ export const certs = certifications.filter(c => c.status === "en_curso");
 export const SUGGESTED = [
   { q: "¿Cuál es tu stack principal?" },
   { q: "Contame tu logro más difícil" },
-  { q: "¿Qué experiencia tenés en banca?" },
-  { q: "¿Estás disponible para trabajar?" },
+  { q: "¿Qué experiencia tenés en banca y energía?" },
+  { q: "¿Qué estás haciendo actualmente?" },
 ];
 
 // ── Legacy exports (kept for backwards compat) ────────────────────
+const taligentJob = experience.find(e => e.id === "taligent")!;
+const heliosJob = experience.find(e => e.id === "helios")!;
+const neorisJob = experience.find(e => e.id === "neoris")!;
+
 export const knowledge = {
   profile: {
     name: profile.name,
     role: profile.role,
-    experience: "+2 años en banca",
+    experience: "+2 años en banca y energía",
     location: profile.location,
     englishLevel: profile.englishLevel,
     workMode: profile.workMode,
@@ -168,19 +198,27 @@ export const knowledge = {
     summary: profile.summary,
   },
   workExperience: {
+    taligent: {
+      role: "Data Engineer",
+      period: "Julio 2026 - Actualidad",
+      sector: "Energía (proyecto YPF)",
+      responsibilities: taligentJob.roles.flatMap(r => r.highlights),
+      tech: taligentJob.tech,
+    },
     helios: {
       role: "Semi Senior Data Engineer",
-      period: "Febrero 2024 - Mayo 2026",
-      responsibilities: experience[0].roles.flatMap(r => r.highlights),
-      tech: experience[0].tech,
-      achievements: experience[0].roles[0].highlights,
+      period: "Febrero 2024 - Julio 2026",
+      sector: "Banca (Grupo Petersen)",
+      responsibilities: heliosJob.roles.flatMap(r => r.highlights),
+      tech: heliosJob.tech,
+      achievements: heliosJob.roles[0].highlights,
       dataTypes: ["Transacciones ATM", "Pagos digitales (MODO)", "Saldos contables", "Métricas HBI", "Tarjetas"],
     },
     neoris: {
       role: "Desarrollador .NET Back-End",
       period: "Febrero 2023 - Agosto 2023",
-      responsibilities: experience[1].roles[0].highlights,
-      tech: experience[1].tech,
+      responsibilities: neorisJob.roles[0].highlights,
+      tech: neorisJob.tech,
     },
   },
   skills: {
@@ -190,7 +228,7 @@ export const knowledge = {
     soft: ["Gobierno de datos", "Relevamiento funcional", "Resolución de incidencias productivas"],
   },
   goals: {
-    roles: ["Semi Senior Data Engineer", "Cloud Data Engineer", "Analytics Engineer"],
-    direction: "Consolidar stack moderno: Azure + Databricks + dbt",
+    roles: ["Data Engineer", "Cloud Data Engineer", "Analytics Engineer"],
+    direction: "Consolidar stack moderno con foco en Spark/PySpark y Azure Databricks.",
   },
 };

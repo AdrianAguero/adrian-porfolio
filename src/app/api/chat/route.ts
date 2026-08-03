@@ -108,7 +108,14 @@ export async function POST(req: Request) {
 
       <work_experience>
         <job>
-          Company: Helios System (Banca)
+          Company: Taligent (proyecto para YPF, sector Energía) — TRABAJO ACTUAL
+          Role: ${knowledge.workExperience.taligent.role}
+          Period: ${knowledge.workExperience.taligent.period}
+          Responsibilities: ${knowledge.workExperience.taligent.responsibilities.join('; ')}
+          Tech Stack: ${knowledge.workExperience.taligent.tech.join(', ')}
+        </job>
+        <job>
+          Company: Helios System (Smart Data Tech), sector Banca — TRABAJO ANTERIOR, finalizado
           Role: ${knowledge.workExperience.helios.role}
           Period: ${knowledge.workExperience.helios.period}
           Responsibilities: ${knowledge.workExperience.helios.responsibilities.join('; ')}
@@ -135,7 +142,7 @@ export async function POST(req: Request) {
       <goals>
         Target Roles: ${knowledge.goals.roles.join(', ')}
         Direction: ${knowledge.goals.direction}
-        Response for "What are you looking for?": "Estoy abierto a nuevas oportunidades en Data Engineering, especialmente roles que me permitan crecer hacia tecnologías cloud. Me interesan posiciones como Data Engineer Jr/Ssr, Big Data Engineer, Cloud Data Engineer o ETL Developer."
+        Response for "Are you looking for a job?" / "What are you looking for?": "Actualmente estoy trabajando en Taligent, en el proyecto de YPF, así que no estoy buscando activamente un cambio. De todos modos, siempre estoy abierto a conocer proyectos y desafíos interesantes en Data Engineering."
       </goals>
     </knowledge_base>
 

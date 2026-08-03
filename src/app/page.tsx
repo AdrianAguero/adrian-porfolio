@@ -54,7 +54,7 @@ function ExpCard({ job }: { job: typeof experience[0] }) {
         <div>
           <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(20px, 3.2vw, 25px)", fontWeight: 600, color: "#E7EAEF", margin: "0 0 5px", letterSpacing: "-0.01em" }}>{job.company}</h3>
           <div style={{ fontFamily: "var(--font-sans)", fontSize: 14, color: "#6FB6DE" }}>
-            Sector Bancario · {job.tenure}
+            Sector {job.sector} · {job.tenure}
           </div>
         </div>
         {job.badge && (
@@ -261,9 +261,8 @@ export default function Home() {
             <Eyebrow color="#8C95A3">Data Engineer</Eyebrow>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 18 }}>
-            <span style={{ fontFamily: "var(--font-sans)", fontSize: 13.5, color: "#3FD79A", display: "flex", alignItems: "center", gap: 7 }}>
-              <span style={{ width: 7, height: 7, borderRadius: 7, background: "#3FD79A", display: "inline-block", animation: "dotPulse 1.4s ease-in-out infinite" }} />
-              Disponible
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "#8C95A3" }}>
+              En Taligent · YPF
             </span>
             <a
               href={profile.links.cv}
@@ -294,7 +293,7 @@ export default function Home() {
               Pipelines de datos <span style={{ fontStyle: "italic", color: "#3FD79A" }}>confiables</span>.
             </h1>
             <p style={{ fontFamily: "var(--font-sans)", fontSize: 15.5, lineHeight: 1.6, color: "#8C95A3", margin: "0 0 20px" }}>
-              +2 años manteniendo pipelines ETL end-to-end sobre Hadoop/Cloudera para 4 bancos del Grupo Petersen. Foco en calidad, trazabilidad e incidencias críticas.
+              +2 años construyendo pipelines ETL end-to-end sobre Cloudera. Banca (4 bancos del Grupo Petersen) y energía (YPF). Foco en calidad, trazabilidad e incidencias críticas.
             </p>
             <div style={{ borderTop: "1px solid #262C37", paddingTop: 18, display: "flex", flexDirection: "column", gap: 10 }}>
               <a
@@ -333,7 +332,7 @@ export default function Home() {
         <div className="section-px" style={{ ...W, paddingTop: 32, paddingBottom: 16 }}>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", justifyContent: "space-between", gap: 8, borderBottom: "1px solid #262C37", paddingBottom: 16, marginBottom: 24 }}>
             <h2 style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(24px, 4vw, 32px)", fontWeight: 600, color: "#E7EAEF", margin: 0, letterSpacing: "-0.01em" }}>Experiencia</h2>
-            <Eyebrow>2023 — 2026</Eyebrow>
+            <Eyebrow>2023 — Actualidad</Eyebrow>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
             {experience.map((job) => <ExpCard key={job.id} job={job} />)}
