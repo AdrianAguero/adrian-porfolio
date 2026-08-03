@@ -50,7 +50,7 @@ export const experience: Job[] = [
       "Desarrollo end-to-end de productos de datos para YPF sobre Cloudera CDP.",
     roles: [
       {
-        role: "Data Engineer",
+        role: "Semi Senior Data Engineer",
         period: "Jul 2026 — Actualidad",
         length: "1 mes",
         current: true,
@@ -66,7 +66,7 @@ export const experience: Job[] = [
   },
   {
     id: "helios",
-    company: "Helios System (Smart Data Tech)",
+    company: "Helios System",
     sector: "Bancario",
     tenure: "2 años 5 meses",
     period: "Feb 2024 — Jul 2026",
@@ -129,7 +129,7 @@ export const experience: Job[] = [
 
 // ── Stack ─────────────────────────────────────────────────────────
 export const stack = {
-  core: ["SQL avanzado", "Apache Hive", "Apache Impala", "Apache NiFi", "PySpark (spark.sql)"],
+  core: ["SQL avanzado", "Apache Hive", "Apache Impala", "Apache NiFi", "PySpark"],
   platform: ["Apache Atlas", "Apache Kudu", "HDFS", "Kafka", "Cloudera", "Spark", "Elastic Stack"],
   learning: ["Python (consolidando)", "PySpark (profundizar API de DataFrames)", "Azure Databricks"],
 };
@@ -199,7 +199,7 @@ export const knowledge = {
   },
   workExperience: {
     taligent: {
-      role: "Data Engineer",
+      role: "Semi Senior Data Engineer",
       period: "Julio 2026 - Actualidad",
       sector: "Energía (proyecto YPF)",
       responsibilities: taligentJob.roles.flatMap(r => r.highlights),

@@ -115,7 +115,7 @@ export async function POST(req: Request) {
           Tech Stack: ${knowledge.workExperience.taligent.tech.join(', ')}
         </job>
         <job>
-          Company: Helios System (Smart Data Tech), sector Banca — TRABAJO ANTERIOR, finalizado
+          Company: Helios System, sector Banca — TRABAJO ANTERIOR, finalizado
           Role: ${knowledge.workExperience.helios.role}
           Period: ${knowledge.workExperience.helios.period}
           Responsibilities: ${knowledge.workExperience.helios.responsibilities.join('; ')}
